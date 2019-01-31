@@ -124,6 +124,7 @@
   export default {
     data () {
       return {
+        filterText: '',
         dataForm: {
           userName: ''
         },
@@ -160,6 +161,12 @@
           return tableHight
         },
         set (val) {}
+      }
+    },
+    watch: {
+      filterText (curval, olaval) {
+        console.log(curval)
+        this.getTreeData()
       }
     },
     methods: {
@@ -228,22 +235,27 @@
         if (!value) return true
         return data.label.indexOf(value) !== -1
       },
+      // 获取部门树结构数据
       getTreeData () {
-        this.$http.get(this.$http.adornUrl('/sysdept/depttree'))
-          .then(({data}) => {
-            if (data) {
-              this.treeData = []
-              this.treeData.push(data)
-            }
+        this.$http({
+          url: this.$http.adornUrl('/sysdept/depttree'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'fullname': this.filterText
+          })
+        }).then(({data}) => {
+          if (data) {
+            this.treeData = []
+            this.treeData.push(data)
           }
-          )
+        })
       },
       // 删除
       deleteHandle (id) {
         var userIds = id ? [id] : this.dataListSelections.map(item => {
           return item.userId
         })
-        this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+        this.$confirm(`确定对用户[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
