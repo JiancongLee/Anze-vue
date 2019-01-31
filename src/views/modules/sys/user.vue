@@ -164,8 +164,8 @@
       }
     },
     watch: {
+      // 监听部门输入值进行模糊查询
       filterText (curval, olaval) {
-        console.log(curval)
         this.getTreeData()
       }
     },

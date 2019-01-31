@@ -6,22 +6,35 @@
         <a class="site-navbar__brand-mini" href="javascript:;">Anze</a>
       </h1>
     </div>
+
     <div class="site-navbar__body clearfix">
-      <el-menu
-        class="site-navbar__menu"
-        mode="horizontal">
-        <el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">
-          <icon-svg name="zhedie"></icon-svg>
-        </el-menu-item>
-      </el-menu>
-      <el-menu :default-active="activeIndex"
-        class="site-navbar__menu" @select="handleSelect"
-        mode="horizontal" >
-        <nabar-menu v-for=" (menu,index) in this.indexNav"
-                         :key="menu.menuId"
-                         :menu="menu">
-        </nabar-menu>
-      </el-menu>
+
+
+
+      <hamburger :toggle-click="toggleSideBar" class="hamburger-container" :is-active="sidebarFold"/>
+
+      <!--<breadcrumb class="breadcrumb-container"/>-->
+
+      <!--<el-menu-->
+        <!--class="site-navbar__menu"-->
+        <!--mode="horizontal">-->
+        <!--<el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">-->
+          <!--<icon-svg name="zhedie"></icon-svg>-->
+        <!--</el-menu-item>-->
+      <!--</el-menu>-->
+
+
+
+
+      <!--<el-menu :default-active="activeIndex"-->
+        <!--class="site-navbar__menu" @select="handleSelect"-->
+        <!--mode="horizontal" >-->
+        <!--<nabar-menu v-for=" (menu,index) in this.indexNav"-->
+                         <!--:key="menu.menuId"-->
+                         <!--:menu="menu">-->
+        <!--</nabar-menu>-->
+      <!--</el-menu>-->
+
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
@@ -54,17 +67,32 @@
   import UpdatePassword from './main-navbar-update-password'
   import NabarMenu from './main-nabar-menu'
   import { clearLoginInfo } from '@/utils'
+  import Breadcrumb from '@/components/Breadcrumb'
+  import Hamburger from '@/components/Hamburger'
+
   export default {
     data () {
       return {
         updatePassowrdVisible: false,
         indexNav: [],
-        activeIndex: '1'
+        activeIndex: '1',
+        items: [{
+          text: 'Admin',
+          href: '#'
+        }, {
+          text: 'Manage',
+          href: '#'
+        }, {
+          text: 'Library',
+          active: true
+        }]
       }
     },
     components: {
       UpdatePassword,
-      NabarMenu
+      NabarMenu,
+      Hamburger,
+      Breadcrumb
     },
     computed: {
       navbarLayoutType: {
@@ -112,6 +140,7 @@
           })
         }).catch(() => {})
       },
+      // 加载数据
       loadData () {
         this.$http({
           url: this.$http.adornUrl('/sys/menu/mainNav'),
@@ -130,7 +159,24 @@
       },
       handleSelect (key, keyPath) {
         this.$emit('change', key)
+      },
+      // 点击收缩伸展左边
+      toggleSideBar () {
+        let val = !this.$store.state.common.sidebarFold
+        this.$store.commit('common/updateSidebarFold', val)
       }
     }
   }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .hamburger-container {
+    line-height: 58px;
+    height: 50px;
+    float: left;
+    padding: 0 10px;
+  }
+  .breadcrumb-container{
+    float: left;
+  }
+</style>

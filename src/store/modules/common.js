@@ -7,11 +7,12 @@ export default {
     // 导航条, 布局风格, defalut(默认) / inverse(反向)
     navbarLayoutType: 'default',
     // 侧边栏, 布局皮肤, light(浅色) / dark(黑色)
-    sidebarLayoutSkin: 'dark',
+    sidebarLayoutSkin: 'light',
     // 侧边栏, 折叠状态
     sidebarFold: false,
     // 侧边栏, 菜单
     menuList: [],
+    // 侧边栏正在显示的菜单名字
     menuActiveName: '',
     // 主入口标签页
     mainTabs: [],
@@ -31,6 +32,7 @@ export default {
       state.sidebarLayoutSkin = skin
     },
     updateSidebarFold (state, fold) {
+      console.log('xix')
       state.sidebarFold = fold
     },
     updateMenuList (state, list) {

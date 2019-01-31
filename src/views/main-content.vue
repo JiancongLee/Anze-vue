@@ -1,10 +1,10 @@
 <template>
   <main >
-    <!-- 主入口标签页 s -->
-    <div   v-if="$route.meta.isTab">
+    <!-- 主入口标签页 s 横向tab-->
+    <div v-if="$route.meta.isTab">
       <div class="tags" >
         <ul>
-          <li class="tags-li" @click="selectedTabHandle(item)" v-for="(item,index) in mainTabs"  :key="index" :class="{'active': mainTabsActiveName==item.name}">
+          <li class="tags-li" @click="selectedTabHandle(item)" v-for="(item,index) in mainTabs" :key="index" :class="{'active': mainTabsActiveName==item.name}">
             <div class="tags-li-title">
               {{item.title}}
               <span class="tags-li-icon" @click="removeTabHandle(item.name)"><i class="el-icon-close"></i></span>
@@ -31,38 +31,6 @@
         </transition>
         </el-card>
     </div>
-<!--    <el-tabs
-      v-if="$route.meta.isTab"
-      v-model="mainTabsActiveName"
-      :closable="true"
-      @tab-click="selectedTabHandle"
-      @tab-remove="removeTabHandle">
-      <el-dropdown class="site-tabs__tools" :show-timeout="0">
-        <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="tabsCloseCurrentHandle">关闭当前标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseOtherHandle">关闭其它标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-      <el-tab-pane
-        v-for="item in mainTabs"
-        :key="item.name"
-        :label="item.title"
-        :name="item.name">
-        <el-card :body-style="siteContentViewHeight">
-          <iframe
-            v-if="item.type === 'iframe'"
-            :src="item.iframeUrl"
-            width="100%" height="100%" frameborder="0" scrolling="yes">
-          </iframe>
-          <keep-alive v-else>
-            <router-view v-if="item.name === mainTabsActiveName" />
-          </keep-alive>
-        </el-card>
-      </el-tab-pane>
-    </el-tabs>-->
     <!-- 主入口标签页 -->
     <el-card v-else :body-style="siteHomeViewHeight">
       <keep-alive>
