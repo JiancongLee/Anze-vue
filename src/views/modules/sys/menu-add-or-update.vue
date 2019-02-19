@@ -49,15 +49,32 @@
               trigger="click"
 
               popper-class="mod-menu__icon-popover">
-              <div class="mod-menu__icon-list">
-                <el-button
-                  v-for="(item, index) in iconList"
-                  :key="index"
-                  @click="iconActiveHandle(item)"
-                  :class="{ 'is-active': item === dataForm.icon }">
-                  <icon-svg :name="item"></icon-svg>
-                </el-button>
-              </div>
+
+              <el-tabs v-model="activeName">
+                <el-tab-pane label="用户管理" name="first">
+                  <div class="mod-menu__icon-list">
+                    <el-button
+                      v-for="(item, index) in iconList"
+                      :key="index"
+                      @click="iconActiveHandle(item)"
+                      :class="{ 'is-active': item === dataForm.icon }">
+                      <icon-svg :name="item"></icon-svg>
+                    </el-button>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="配置管理" name="second">
+                  <div class="mod-menu__icon-list">
+                    <el-button
+                      v-for="(item, index) in iconList1"
+                      :key="index"
+                      @click="iconActiveHandle(item)"
+                      :class="{ 'is-active': item === dataForm.icon }">
+                      <icon-svg :name="item"></icon-svg>
+                    </el-button>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+
             </el-popover>
             <el-input v-model="dataForm.icon" v-popover:iconListPopover :readonly="true" placeholder="菜单图标名称" class="icon-list__input"></el-input>
           </el-col>
@@ -103,7 +120,8 @@
           perms: '',
           orderNum: 0,
           icon: '',
-          iconList: []
+          iconList: [],
+          iconList1: []
         },
         dataRule: {
           name: [
@@ -120,11 +138,13 @@
         menuListTreeProps: {
           label: 'name',
           children: 'children'
-        }
+        },
+        activeName: 'first'
       }
     },
     created () {
       this.iconList = Icon.getNameList()
+      this.iconList1 = Icon.getNameList1()
     },
     methods: {
       init (id) {
@@ -166,6 +186,7 @@
       },
       // 菜单树选中
       menuListTreeCurrentChangeHandle (data, node) {
+        console.log(data)
         this.dataForm.parentId = data.menuId
         this.dataForm.parentName = data.name
         this.visible2 = false

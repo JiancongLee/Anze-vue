@@ -32,7 +32,6 @@ export default {
       state.sidebarLayoutSkin = skin
     },
     updateSidebarFold (state, fold) {
-      console.log('xix')
       state.sidebarFold = fold
     },
     updateMenuList (state, list) {

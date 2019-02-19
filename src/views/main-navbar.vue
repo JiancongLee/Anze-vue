@@ -38,13 +38,21 @@
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-        <el-menu-item index="5" @click="$router.push({ name: 'theme' })">
-          <template slot="title">
-            <el-badge value="new">
-              <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
-            </el-badge>
-          </template>
-        </el-menu-item>
+
+
+        <!--<el-menu-item index="5" @click="$router.push({ name: 'theme' })">-->
+          <!--<template slot="title">-->
+            <!--<el-badge value="new">-->
+              <!--<icon-svg name="shezhi" class="el-icon-setting"></icon-svg>-->
+            <!--</el-badge>-->
+          <!--</template>-->
+        <!--</el-menu-item>-->
+
+        <!--<el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">-->
+          <!--<screenfull class="screenfull right-menu-item"/>-->
+        <!--</el-tooltip>-->
+
+
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
@@ -67,8 +75,9 @@
   import UpdatePassword from './main-navbar-update-password'
   import NabarMenu from './main-nabar-menu'
   import { clearLoginInfo } from '@/utils'
-  import Breadcrumb from '@/components/Breadcrumb'
+  // import Breadcrumb from '@/components/Breadcrumb'
   import Hamburger from '@/components/Hamburger'
+  // import Screenfull from '@/components/Screenfull'
 
   export default {
     data () {
@@ -91,8 +100,9 @@
     components: {
       UpdatePassword,
       NabarMenu,
-      Hamburger,
-      Breadcrumb
+      Hamburger
+      // Breadcrumb
+      // Screenfull
     },
     computed: {
       navbarLayoutType: {

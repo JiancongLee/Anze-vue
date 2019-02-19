@@ -20,14 +20,14 @@
         prop="name"
         header-align="center"
         treeKey="menuId"
-        width="150"
+        width="250"
         label="名称">
       </table-tree-column>
       <el-table-column
         prop="parentName"
         header-align="center"
         align="center"
-        width="120"
+        width="150"
         label="上级菜单">
       </el-table-column>
       <el-table-column

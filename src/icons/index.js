@@ -19,9 +19,33 @@ Vue.component('IconSvg', IconSvg)
 const svgFiles = require.context('./svg', true, /\.svg$/)
 const iconList = svgFiles.keys().map(item => svgFiles(item))
 
+const svgFiles1 = require.context('./svg/list1', true, /\.svg$/)
+const iconList1 = svgFiles1.keys().map(item => svgFiles1(item))
+
+const svgFiles2 = require.context('./svg/list2', true, /\.svg$/)
+const iconList2 = svgFiles2.keys().map(item => svgFiles2(item))
+
+const svgFiles3 = require.context('./svg', true, /\.svg$/)
+const iconList3 = svgFiles3.keys().map(item => svgFiles3(item))
+
+const svgFiles4 = require.context('./svg', true, /\.svg$/)
+const iconList4 = svgFiles4.keys().map(item => svgFiles4(item))
+
 export default {
   // 获取图标icon-(*).svg名称列表, 例如[shouye, xitong, zhedie, ...]
   getNameList () {
     return iconList.map(item => item.default.id.split('-')[1])
+  },
+  getNameList1 () {
+    return iconList1.map(item => item.default.id.split('-')[1])
+  },
+  getNameList2 () {
+    return iconList2.map(item => item.default.id.split('-')[1])
+  },
+  getNameList3 () {
+    return iconList3.map(item => item.default.id.split('-')[1])
+  },
+  getNameList4 () {
+    return iconList4.map(item => item.default.id.split('-')[1])
   }
 }
