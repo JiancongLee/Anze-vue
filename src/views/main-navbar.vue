@@ -8,50 +8,11 @@
     </div>
 
     <div class="site-navbar__body clearfix">
-
-
-
       <hamburger :toggle-click="toggleSideBar" class="hamburger-container" :is-active="sidebarFold"/>
-
-      <!--<breadcrumb class="breadcrumb-container"/>-->
-
-      <!--<el-menu-->
-        <!--class="site-navbar__menu"-->
-        <!--mode="horizontal">-->
-        <!--<el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">-->
-          <!--<icon-svg name="zhedie"></icon-svg>-->
-        <!--</el-menu-item>-->
-      <!--</el-menu>-->
-
-
-
-
-      <!--<el-menu :default-active="activeIndex"-->
-        <!--class="site-navbar__menu" @select="handleSelect"-->
-        <!--mode="horizontal" >-->
-        <!--<nabar-menu v-for=" (menu,index) in this.indexNav"-->
-                         <!--:key="menu.menuId"-->
-                         <!--:menu="menu">-->
-        <!--</nabar-menu>-->
-      <!--</el-menu>-->
 
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-
-
-        <!--<el-menu-item index="5" @click="$router.push({ name: 'theme' })">-->
-          <!--<template slot="title">-->
-            <!--<el-badge value="new">-->
-              <!--<icon-svg name="shezhi" class="el-icon-setting"></icon-svg>-->
-            <!--</el-badge>-->
-          <!--</template>-->
-        <!--</el-menu-item>-->
-
-        <!--<el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">-->
-          <!--<screenfull class="screenfull right-menu-item"/>-->
-        <!--</el-tooltip>-->
-
 
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
