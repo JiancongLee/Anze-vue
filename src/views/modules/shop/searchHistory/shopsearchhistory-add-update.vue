@@ -5,22 +5,19 @@
     :visible.sync="visible"
     center>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="主键" prop="id">
-            <el-input v-model="dataForm.id" placeholder="主键"></el-input>
-        </el-form-item>
         <el-form-item label="关键字" prop="keyword">
             <el-input v-model="dataForm.keyword" placeholder="关键字"></el-input>
         </el-form-item>
-        <el-form-item label="搜索来源，如PC、小程序、APP等" prop="from">
-            <el-input v-model="dataForm.from" placeholder="搜索来源，如PC、小程序、APP等"></el-input>
-        </el-form-item>
-        <el-form-item label="搜索时间" prop="addTime">
-            <el-date-picker
-                    v-model="dataForm.addTime"
-                    type="date"
-                    placeholder="搜索时间">
-            </el-date-picker>
-        </el-form-item>
+        <!--<el-form-item label="搜索来源，如PC、小程序、APP等" prop="from">-->
+            <!--<el-input v-model="dataForm.from" placeholder="搜索来源，如PC、小程序、APP等"></el-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="搜索时间" prop="addTime">-->
+            <!--<el-date-picker-->
+                    <!--v-model="dataForm.addTime"-->
+                    <!--type="date"-->
+                    <!--placeholder="搜索时间">-->
+            <!--</el-date-picker>-->
+        <!--</el-form-item>-->
         <el-form-item label="会员Id" prop="userId">
             <el-input v-model="dataForm.userId" placeholder="会员Id"></el-input>
         </el-form-item>
@@ -42,14 +39,13 @@
           id: '',
           keyword: '',
           from: '',
-          addTime: '',
+          createTime: '',
           userId: ''
         },
         dataRule: {
           id: [{ required: true, message: '不能为空', trigger: 'blur' }],
           keyword: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          from: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          addTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          createTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
           userId: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
       }
@@ -71,8 +67,7 @@
               if (data && data.code === 0) {
                 this.dataForm.id = data.shopsearchhistory.id
                 this.dataForm.keyword = data.shopsearchhistory.keyword
-                this.dataForm.from = data.shopsearchhistory.from
-                this.dataForm.addTime = data.shopsearchhistory.addTime
+                this.dataForm.createTime = data.shopsearchhistory.createTime
                 this.dataForm.userId = data.shopsearchhistory.userId
               }
             })
@@ -89,8 +84,7 @@
               data: this.$http.adornData({
                 'id': this.dataForm.id,
                 'keyword': this.dataForm.keyword,
-                'from': this.dataForm.from,
-                'addTime': this.dataForm.addTime,
+                'createTime': this.dataForm.createTime,
                 'userId': this.dataForm.userId
               })
             }).then(({data}) => {

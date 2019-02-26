@@ -52,6 +52,16 @@
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
             <el-input v-model="dataForm.avatar" placeholder="头像"></el-input>
+          <!--<el-upload-->
+            <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+            <!--list-type="picture-card"-->
+            <!--:on-preview="handlePictureCardPreview"-->
+            <!--:on-remove="handleRemove">-->
+            <!--<i class="el-icon-plus"></i>-->
+          <!--</el-upload>-->
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dataForm.avatar" alt="">
+          </el-dialog>
         </el-form-item>
         <el-form-item label="微信id" prop="weixinOpenid">
             <el-input v-model="dataForm.weixinOpenid" placeholder="微信id"></el-input>
@@ -68,6 +78,33 @@
 <script>
   export default {
     data () {
+      // let checkEmail = (rule, value, callback) => {
+      //   if (!value) {
+      //     callback(new Error('邮箱不能为空'))
+      //   } else {
+      //     if (value !== '') {
+      //       var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+      //       if (!reg.test(value)) {
+      //         callback(new Error('请输入有效的邮箱'))
+      //       }
+      //     }
+      //     callback()
+      //   }
+      // }
+      // 校验手机号码
+      let checkPhone = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('手机号不能为空'))
+        } else {
+          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+          console.log(reg.test(value))
+          if (reg.test(value)) {
+            callback()
+          } else {
+            return callback(new Error('请输入正确的手机号'))
+          }
+        }
+      }
       return {
         visible: false,
         dataForm: {
@@ -120,15 +157,24 @@
           lastLoginIp: [{ required: true, message: '不能为空', trigger: 'blur' }],
           userLevelCode: [{ required: true, message: '不能为空', trigger: 'blur' }],
           nickname: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          mobile: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          mobile: [{validator: checkPhone, trigger: 'blur'}],
           avatar: [{ required: true, message: '不能为空', trigger: 'blur' }],
           weixinOpenid: [{ required: true, message: '不能为空', trigger: 'blur' }],
           createTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
           updateTime: [{ required: true, message: '不能为空', trigger: 'blur' }]
-        }
+        },
+        dialogImageUrl: '',
+        dialogVisible: false
       }
     },
     methods: {
+      handleRemove (file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePictureCardPreview (file) {
+        this.dialogImageUrl = file.url
+        this.dialogVisible = true
+      },
       init (id) {
         this.dataForm.id = id || ''
         this.visible = true

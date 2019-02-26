@@ -33,7 +33,7 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="memberId"
         header-align="center"
         align="center"
         label="会员ID">
@@ -55,12 +55,6 @@
         header-align="center"
         align="center"
         label="邮编">
-      </el-table-column>
-      <el-table-column
-        prop="nationalCode"
-        header-align="center"
-        align="center"
-        label="收货地址国家码">
       </el-table-column>
       <el-table-column
         prop="provinceName"
@@ -85,6 +79,16 @@
         header-align="center"
         align="center"
         label="详细收货地址信息">
+      </el-table-column>
+      <el-table-column
+        prop="isDefault"
+        header-align="center"
+        align="center"
+        label="是否为默认地址">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isDefault === 0" size="small" type="info">否</el-tag>
+          <el-tag v-if="scope.row.isDefault === 1" size="small" type="success">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -230,7 +234,6 @@
             userName: '',
             telNumber: '',
             postalCode: '',
-            nationalCode: '',
             provinceName: '',
             cityName: '',
             countyName: '',

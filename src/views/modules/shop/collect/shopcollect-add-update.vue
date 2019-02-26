@@ -5,27 +5,24 @@
     :visible.sync="visible"
     center>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="主键" prop="id">
-            <el-input v-model="dataForm.id" placeholder="主键"></el-input>
-        </el-form-item>
         <el-form-item label="用户Id" prop="userId">
             <el-input v-model="dataForm.userId" placeholder="用户Id"></el-input>
         </el-form-item>
         <el-form-item label="产品Id" prop="valueId">
             <el-input v-model="dataForm.valueId" placeholder="产品Id"></el-input>
         </el-form-item>
-        <el-form-item label="添加时间" prop="addTime">
-            <el-date-picker
-                    v-model="dataForm.addTime"
-                    type="date"
-                    placeholder="添加时间">
-            </el-date-picker>
-        </el-form-item>
+        <!--<el-form-item label="添加时间" prop="addTime">-->
+            <!--<el-date-picker-->
+                    <!--v-model="dataForm.addTime"-->
+                    <!--type="date"-->
+                    <!--placeholder="添加时间">-->
+            <!--</el-date-picker>-->
+        <!--</el-form-item>-->
         <el-form-item label="是否提醒" prop="isAttention">
             <el-input v-model="dataForm.isAttention" placeholder="是否提醒"></el-input>
         </el-form-item>
-        <el-form-item label="TypeId" prop="typeId">
-            <el-input v-model="dataForm.typeId" placeholder="TypeId"></el-input>
+        <el-form-item label="Type" prop="type">
+            <el-input v-model="dataForm.type" placeholder="类型"></el-input>
         </el-form-item>
 
     </el-form>
@@ -45,15 +42,13 @@
           id: '',
           userId: '',
           valueId: '',
-          addTime: '',
           isAttention: '',
-          typeId: ''
+          type: ''
         },
         dataRule: {
           id: [{ required: true, message: '不能为空', trigger: 'blur' }],
           userId: [{ required: true, message: '不能为空', trigger: 'blur' }],
           valueId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          addTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
           isAttention: [{ required: true, message: '不能为空', trigger: 'blur' }],
           typeId: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
@@ -77,9 +72,8 @@
                 this.dataForm.id = data.shopcollect.id
                 this.dataForm.userId = data.shopcollect.userId
                 this.dataForm.valueId = data.shopcollect.valueId
-                this.dataForm.addTime = data.shopcollect.addTime
                 this.dataForm.isAttention = data.shopcollect.isAttention
-                this.dataForm.typeId = data.shopcollect.typeId
+                this.dataForm.type = data.shopcollect.type
               }
             })
           }
@@ -96,9 +90,8 @@
                 'id': this.dataForm.id,
                 'userId': this.dataForm.userId,
                 'valueId': this.dataForm.valueId,
-                'addTime': this.dataForm.addTime,
                 'isAttention': this.dataForm.isAttention,
-                'typeId': this.dataForm.typeId
+                'type': this.dataForm.type
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

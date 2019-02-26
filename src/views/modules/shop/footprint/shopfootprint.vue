@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopfootprint:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopfootprint:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <!--<el-button v-if="isAuth('shopfootprint:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopfootprint:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopfootprint:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -33,7 +33,7 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="memberId"
         header-align="center"
         align="center"
         label="会员Id">
@@ -45,17 +45,11 @@
         label="商品id">
       </el-table-column>
       <el-table-column
-        prop="addTime"
+        prop="createTime"
         header-align="center"
         align="center"
         label="记录时间">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="referrer"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="转发人">-->
-      <!--</el-table-column>-->
       <el-table-column
         fixed="right"
         header-align="center"
@@ -196,10 +190,9 @@
           responseType: 'blob',
           params: {
             id: '',
-            userId: '',
+            memberId: '',
             goodsId: '',
-            addTime: '',
-            referrer: ''
+            createTime: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})

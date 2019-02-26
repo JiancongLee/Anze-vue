@@ -8,7 +8,6 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopsearchhistory:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopsearchhistory:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
           <el-button v-if="isAuth('shopsearchhistory:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopsearchhistory:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -33,25 +32,19 @@
         width="50">
       </el-table-column>
       <el-table-column
+        prop="userId"
+        header-align="center"
+        align="center"
+        label="会员Id">
+      </el-table-column>
+      <el-table-column
         prop="keyword"
         header-align="center"
         align="center"
         label="关键字">
       </el-table-column>
       <el-table-column
-        prop="userId"
-        header-align="center"
-        align="center"
-        label="会员Id">
-      </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="from"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="搜索来源，如PC、小程序、APP等">-->
-      <!--</el-table-column>-->
-      <el-table-column
-        prop="addTime"
+        prop="createTime"
         header-align="center"
         align="center"
         label="搜索时间">
@@ -63,7 +56,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
+          <!--<el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>-->
           <el-button type="text" size="small"  class="red" v-on:click.stop="deleteHandle(scope.row.id)"><icon-svg name="shanchu" class="icon"></icon-svg>删除</el-button>
         </template>
       </el-table-column>
@@ -197,8 +190,7 @@
           params: {
             id: '',
             keyword: '',
-            from: '',
-            addTime: '',
+            createTime: '',
             userId: ''
           }
         }).then((response) => {

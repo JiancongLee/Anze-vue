@@ -4,38 +4,67 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     center>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="主键" prop="id">
-            <el-input v-model="dataForm.id" placeholder="主键"></el-input>
-        </el-form-item>
-        <el-form-item label="会员ID" prop="userId">
-            <el-input v-model="dataForm.userId" placeholder="会员ID"></el-input>
-        </el-form-item>
-        <el-form-item label="收货人姓名" prop="userName">
-            <el-input v-model="dataForm.userName" placeholder="收货人姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="telNumber">
-            <el-input v-model="dataForm.telNumber" placeholder="手机"></el-input>
-        </el-form-item>
-        <el-form-item label="邮编" prop="postalCode">
-            <el-input v-model="dataForm.postalCode" placeholder="邮编"></el-input>
-        </el-form-item>
-        <el-form-item label="收货地址国家码" prop="nationalCode">
-            <el-input v-model="dataForm.nationalCode" placeholder="收货地址国家码"></el-input>
-        </el-form-item>
-        <el-form-item label="省" prop="provinceName">
-            <el-input v-model="dataForm.provinceName" placeholder="省"></el-input>
-        </el-form-item>
-        <el-form-item label="市" prop="cityName">
-            <el-input v-model="dataForm.cityName" placeholder="市"></el-input>
-        </el-form-item>
-        <el-form-item label="区" prop="countyName">
-            <el-input v-model="dataForm.countyName" placeholder="区"></el-input>
-        </el-form-item>
-        <el-form-item label="详细收货地址信息" prop="detailInfo">
-            <el-input v-model="dataForm.detailInfo" placeholder="详细收货地址信息"></el-input>
-        </el-form-item>
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+      <el-form-item label="会员ID" prop="memberId">
+          <el-input v-model="dataForm.memberId" placeholder="会员ID"></el-input>
+      </el-form-item>
+      <el-form-item label="收货人姓名" prop="userName">
+          <el-input v-model="dataForm.userName" placeholder="收货人姓名"></el-input>
+      </el-form-item>
+      <el-form-item label="手机" prop="telNumber">
+          <el-input v-model="dataForm.telNumber" placeholder="手机"></el-input>
+      </el-form-item>
+      <el-form-item label="邮编" prop="postalCode">
+          <el-input v-model="dataForm.postalCode" placeholder="邮编"></el-input>
+      </el-form-item>
 
+      <el-row>
+        <el-col :span="7">
+          <el-form-item label="省" prop="provinceName">
+            <el-select v-model="dataForm.value8" filterable placeholder="请选择">
+              <el-option
+                v-for="item in dataForm.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="7" :offset="1">
+          <el-form-item label="市" prop="cityName">
+            <el-select v-model="dataForm.value8" filterable placeholder="请选择">
+              <el-option
+                v-for="item in dataForm.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="7" :offset="1">
+          <el-form-item label="区" prop="countyName">
+            <el-select v-model="dataForm.value8" filterable placeholder="请选择">
+              <el-option
+                v-for="item in dataForm.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item label="详细收货地址" prop="detailInfo">
+          <el-input v-model="dataForm.detailInfo" placeholder="详细收货地址信息"></el-input>
+      </el-form-item>
+      <el-form-item label="是否为默认地址" prop="isDefault">
+        <el-radio-group v-model="dataForm.isDefault">
+          <el-radio :label=0>否</el-radio>
+          <el-radio :label=1>是</el-radio>
+        </el-radio-group>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -47,37 +76,67 @@
 <script>
   export default {
     data () {
+      let checkPhone = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('手机号不能为空'))
+        } else {
+          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+          console.log(reg.test(value))
+          if (reg.test(value)) {
+            callback()
+          } else {
+            return callback(new Error('请输入正确的手机号'))
+          }
+        }
+      }
       return {
         visible: false,
         dataForm: {
           id: '',
-          userId: '',
+          memberId: '',
           userName: '',
           telNumber: '',
           postalCode: '',
-          nationalCode: '',
           provinceName: '',
           cityName: '',
           countyName: '',
-          detailInfo: ''
+          detailInfo: '',
+          isDefault: 0,
+          options: [{
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }, {
+            value: '选项3',
+            label: '蚵仔煎'
+          }, {
+            value: '选项4',
+            label: '龙须面'
+          }, {
+            value: '选项5',
+            label: '北京烤鸭'
+          }],
+          value8: ''
         },
         dataRule: {
           id: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          userId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          memberId: [{ required: true, message: '不能为空', trigger: 'blur' }],
           userName: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          telNumber: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          postalCode: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          telNumber: [{validator: checkPhone, trigger: 'blur'}],
           nationalCode: [{ required: true, message: '不能为空', trigger: 'blur' }],
           provinceName: [{ required: true, message: '不能为空', trigger: 'blur' }],
           cityName: [{ required: true, message: '不能为空', trigger: 'blur' }],
           countyName: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          detailInfo: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          detailInfo: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          isDefault: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
       }
     },
     methods: {
       init (id) {
-        this.dataForm.id = id || 0
+        this.dataForm.id = id || ''
         this.visible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
@@ -86,20 +145,20 @@
               url: this.$http.adornUrl(`/shopaddress/info`),
               method: 'get',
               params: this.$http.adornParams({
-                '': this.dataForm.id
+                'id': this.dataForm.id
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.dataForm.id = data.shopaddress.id
-                this.dataForm.userId = data.shopaddress.userId
+                this.dataForm.memberId = data.shopaddress.memberId
                 this.dataForm.userName = data.shopaddress.userName
                 this.dataForm.telNumber = data.shopaddress.telNumber
                 this.dataForm.postalCode = data.shopaddress.postalCode
-                this.dataForm.nationalCode = data.shopaddress.nationalCode
                 this.dataForm.provinceName = data.shopaddress.provinceName
                 this.dataForm.cityName = data.shopaddress.cityName
                 this.dataForm.countyName = data.shopaddress.countyName
                 this.dataForm.detailInfo = data.shopaddress.detailInfo
+                this.dataForm.isDefault = data.shopaddress.isDefault
               }
             })
           }
@@ -114,15 +173,15 @@
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id,
-                'userId': this.dataForm.userId,
+                'memberId': this.dataForm.memberId,
                 'userName': this.dataForm.userName,
                 'telNumber': this.dataForm.telNumber,
                 'postalCode': this.dataForm.postalCode,
-                'nationalCode': this.dataForm.nationalCode,
                 'provinceName': this.dataForm.provinceName,
                 'cityName': this.dataForm.cityName,
                 'countyName': this.dataForm.countyName,
-                'detailInfo': this.dataForm.detailInfo
+                'detailInfo': this.dataForm.detailInfo,
+                'isDefault': this.dataForm.isDefault
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

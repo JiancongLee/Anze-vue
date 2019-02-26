@@ -33,52 +33,16 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="memberId"
         header-align="center"
         align="center"
         label="会员Id">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="sessionId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="sessionId">-->
-      <!--</el-table-column>-->
       <el-table-column
         prop="goodsId"
         header-align="center"
         align="center"
         label="商品Id">
-      </el-table-column>
-      <el-table-column
-        prop="goodsSn"
-        header-align="center"
-        align="center"
-        label="商品序列号">
-      </el-table-column>
-      <el-table-column
-        prop="productId"
-        header-align="center"
-        align="center"
-        label="产品Id">
-      </el-table-column>
-      <el-table-column
-        prop="goodsName"
-        header-align="center"
-        align="center"
-        label="产品名称">
-      </el-table-column>
-      <el-table-column
-        prop="marketPrice"
-        header-align="center"
-        align="center"
-        label="市场价">
-      </el-table-column>
-      <el-table-column
-        prop="retailPrice"
-        header-align="center"
-        align="center"
-        label="零售价格">
       </el-table-column>
       <el-table-column
         prop="number"
@@ -87,31 +51,7 @@
         label="数量">
       </el-table-column>
       <el-table-column
-        prop="goodsSpecifitionNameValue"
-        header-align="center"
-        align="center"
-        label="规格属性">
-      </el-table-column>
-      <el-table-column
-        prop="goodsSpecifitionIds"
-        header-align="center"
-        align="center"
-        label="product">
-      </el-table-column>
-      <el-table-column
-        prop="checked"
-        header-align="center"
-        align="center"
-        label="Checked">
-      </el-table-column>
-      <el-table-column
-        prop="listPicUrl"
-        header-align="center"
-        align="center"
-        label="商品图片">
-      </el-table-column>
-      <el-table-column
-        prop="addTime"
+        prop="createTime"
         header-align="center"
         align="center"
         label="添加时间">
@@ -256,20 +196,10 @@
           responseType: 'blob',
           params: {
             id: '',
-            userId: '',
-            sessionId: '',
+            memberId: '',
             goodsId: '',
-            goodsSn: '',
-            productId: '',
-            goodsName: '',
-            marketPrice: '',
-            retailPrice: '',
             number: '',
-            goodsSpecifitionNameValue: '',
-            goodsSpecifitionIds: '',
-            checked: '',
-            listPicUrl: '',
-            addTime: ''
+            createTime: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})

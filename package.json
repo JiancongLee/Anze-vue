@@ -29,6 +29,7 @@
     "jquery": "^3.3.1",
     "jsoneditor": "^5.26.3",
     "lodash": "4.17.5",
+    "moment": "^2.24.0",
     "multiparty": "^4.2.1",
     "node-sass": "4.9.0",
     "normalize.css": "^8.0.1",

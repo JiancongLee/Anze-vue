@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopmember:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopmember:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <!--<el-button v-if="isAuth('shopmember:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopmember:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopmember:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -38,17 +38,16 @@
         align="center"
         label="名称">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="password"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="密码">-->
-      <!--</el-table-column>-->
       <el-table-column
         prop="gender"
         header-align="center"
         align="center"
         label="性别">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.gender === 0" size="small" type="success">男</el-tag>
+          <el-tag v-if="scope.row.gender === 1" size="small" type="warning">女</el-tag>
+          <el-tag v-if="scope.row.gender === 2" size="small" type="info">保密</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="mobile"
@@ -60,7 +59,8 @@
         prop="birthday"
         header-align="center"
         align="center"
-        label="生日">
+        label="生日"
+        :formatter="dateFormat">
       </el-table-column>
       <el-table-column
         prop="registerTime"
@@ -68,49 +68,27 @@
         align="center"
         label="注册时间">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="lastLoginTime"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="最后登陆时间">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="lastLoginIp"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="最后登陆ip">-->
-      <!--</el-table-column>-->
       <el-table-column
         prop="userLevelCode"
         header-align="center"
         align="center"
         label="会员等级">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.userLevelCode === 0" size="small" type="success">普通用户</el-tag>
+          <el-tag v-if="scope.row.userLevelCode === 1" size="small" type="warning">VIP用户</el-tag>
+          <el-tag v-if="scope.row.userLevelCode === 2" size="small" type="info">高级VIP用户</el-tag>
+        </template>
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="nickname"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="昵称">-->
-      <!--</el-table-column>-->
-
-      <!--<el-table-column-->
-        <!--prop="avatar"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="头像">-->
-        <!--<template slot-scope="scope"><img style="height: 80px" :src="scope.row.avatar"></template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="weixinOpenid"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="微信id">-->
-      <!--</el-table-column>-->
       <el-table-column
         prop="status"
         header-align="center"
         align="center"
         label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 0" size="small" type="success">可用</el-tag>
+          <el-tag v-if="scope.row.status === 1" size="small" type="danger">禁用</el-tag>
+          <el-tag v-if="scope.row.status === 2" size="small" type="info">注销</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -142,6 +120,7 @@
 
 <script>
   import AddOrUpdate from './shopmember-add-update'
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -190,7 +169,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'key': this.dataForm.key
+            'username': this.dataForm.key
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -209,6 +188,13 @@
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList()
+      },
+      dateFormat: function (row, column) {
+        let date = row[column.property]
+        if (date === undefined) {
+          return ''
+        }
+        return moment(date).format('YYYY-MM-DD')
       },
       // 当前页
       currentChangeHandle (val) {

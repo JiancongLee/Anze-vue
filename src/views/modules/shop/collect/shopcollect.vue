@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopcollect:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopcollect:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <!--<el-button v-if="isAuth('shopcollect:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopcollect:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopcollect:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -46,23 +46,11 @@
         label="产品Id">
       </el-table-column>
       <el-table-column
-        prop="addTime"
+        prop="createTime"
         header-align="center"
         align="center"
         label="添加时间">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="isAttention"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="是否提醒">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="typeId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="TypeId">-->
-      <!--</el-table-column>-->
       <el-table-column
         fixed="right"
         header-align="center"
