@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopaddress:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopaddress:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <!--<el-button v-if="isAuth('shopaddress:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopaddress:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopaddress:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -33,7 +33,7 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="memberId"
+        prop="memberName"
         header-align="center"
         align="center"
         label="会员ID">
