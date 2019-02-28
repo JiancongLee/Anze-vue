@@ -33,209 +33,71 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="categoryId"
-        header-align="center"
-        align="center"
-        label="CategoryId">
-      </el-table-column>
-      <el-table-column
-        prop="goodsSn"
-        header-align="center"
-        align="center"
-        label="GoodsSn">
-      </el-table-column>
-      <el-table-column
         prop="name"
         header-align="center"
         align="center"
-        label="Name">
+        label="商品名称">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="brandId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="BrandId">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="goodsNumber"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="GoodsNumber">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="keywords"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="Keywords">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="goodsBrief"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="GoodsBrief">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="goodsDesc"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="GoodsDesc">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isOnSale"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="IsOnSale">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="addTime"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="AddTime">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="sortOrder"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="SortOrder">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isDelete"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="IsDelete">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="attributeCategory"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="AttributeCategory">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="counterPrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="专柜价格">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="extraPrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="附加价格">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isNew"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="IsNew">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="goodsUnit"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="商品单位">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="primaryPicUrl"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="商品主图">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="listPicUrl"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="商品列表图">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="retailPrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="零售价格">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="sellVolume"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="销售量">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="primaryProductId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="主sku　product_id">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="unitPrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="单位价格，单价">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="promotionDesc"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="PromotionDesc">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="promotionTag"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="PromotionTag">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="appExclusivePrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="APP专享价">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isAppExclusive"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="是否是APP专属">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isLimited"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="IsLimited">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="isHot"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="IsHot">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="marketPrice"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="MarketPrice">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="createUserId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="创建人ID">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="updateUserId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="修改人ID">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="updateTime"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="修改时间">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-        <!--prop="createUserDeptId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="CreateUserDeptId">-->
-      <!--</el-table-column>-->
+      <el-table-column
+        prop="brandId"
+        header-align="center"
+        align="center"
+        label="品牌id">
+      </el-table-column>
+      <el-table-column
+        prop="categoryId"
+        header-align="center"
+        align="center"
+        label="商品类别ID">
+      </el-table-column>
+      <el-table-column
+        prop="goodsNumber"
+        header-align="center"
+        align="center"
+        label="序列号">
+      </el-table-column>
+      <el-table-column
+        prop="keywords"
+        header-align="center"
+        align="center"
+        label="关键字">
+      </el-table-column>
+      <el-table-column
+        prop="counterPrice"
+        header-align="center"
+        align="center"
+        label="专柜价格">
+      </el-table-column>
+      <el-table-column
+        prop="price"
+        header-align="center"
+        align="center"
+        label="价格">
+      </el-table-column>
+      <el-table-column
+        prop="primaryPicUrl"
+        header-align="center"
+        align="center"
+        label="商品主图">
+      </el-table-column>
+      <el-table-column
+        prop="isNew"
+        header-align="center"
+        align="center"
+        label="是否新品：0否 1是">
+      </el-table-column>
+      <el-table-column
+        prop="isOnSale"
+        header-align="center"
+        align="center"
+        label="是否在售:0否 1是">
+      </el-table-column>
+      <el-table-column
+        prop="isHot"
+        header-align="center"
+        align="center"
+        label="是否热销：0否 1是">
+      </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
@@ -376,40 +238,27 @@
           responseType: 'blob',
           params: {
             id: '',
-            categoryId: '',
-            goodsSn: '',
             name: '',
             brandId: '',
+            categoryId: '',
             goodsNumber: '',
             keywords: '',
+            counterPrice: '',
+            price: '',
             goodsBrief: '',
             goodsDesc: '',
-            isOnSale: '',
-            addTime: '',
             sortOrder: '',
-            isDelete: '',
-            attributeCategory: '',
-            counterPrice: '',
-            extraPrice: '',
-            isNew: '',
             goodsUnit: '',
             primaryPicUrl: '',
             listPicUrl: '',
-            retailPrice: '',
-            sellVolume: '',
-            primaryProductId: '',
-            unitPrice: '',
-            promotionDesc: '',
-            promotionTag: '',
-            appExclusivePrice: '',
-            isAppExclusive: '',
-            isLimited: '',
+            isNew: '',
+            isOnSale: '',
             isHot: '',
-            marketPrice: '',
+            isDelete: '',
             createUserId: '',
+            createTime: '',
             updateUserId: '',
-            updateTime: '',
-            createUserDeptId: ''
+            updateTime: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})
