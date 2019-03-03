@@ -7,7 +7,15 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
-          <el-button v-if="isAuth('shopgoods:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
+          <el-dropdown @command="handleCommand" trigger="click">
+            <el-button v-if="isAuth('shopgoods:add')" type="primary"> 新增<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="composeValue(0,'')">百货</el-dropdown-item>
+              <el-dropdown-item :command="composeValue(1,'')">食品</el-dropdown-item>
+              <el-dropdown-item :command="composeValue(2,'')">器械设备</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-button v-if="isAuth('shopgoods:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
           <el-button v-if="isAuth('shopgoods:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopgoods:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
@@ -57,24 +65,6 @@
         label="序列号">
       </el-table-column>
       <el-table-column
-        prop="keywords"
-        header-align="center"
-        align="center"
-        label="关键字">
-      </el-table-column>
-      <el-table-column
-        prop="counterPrice"
-        header-align="center"
-        align="center"
-        label="专柜价格">
-      </el-table-column>
-      <el-table-column
-        prop="price"
-        header-align="center"
-        align="center"
-        label="价格">
-      </el-table-column>
-      <el-table-column
         prop="primaryPicUrl"
         header-align="center"
         align="center"
@@ -84,19 +74,19 @@
         prop="isNew"
         header-align="center"
         align="center"
-        label="是否新品：0否 1是">
+        label="是否新品">
       </el-table-column>
       <el-table-column
         prop="isOnSale"
         header-align="center"
         align="center"
-        label="是否在售:0否 1是">
+        label="是否在售">
       </el-table-column>
       <el-table-column
         prop="isHot"
         header-align="center"
         align="center"
-        label="是否热销：0否 1是">
+        label="是否热销">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -105,7 +95,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
+          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.kind,scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
           <el-button type="text" size="small"  class="red" v-on:click.stop="deleteHandle(scope.row.id)"><icon-svg name="shanchu" class="icon"></icon-svg>删除</el-button>
         </template>
       </el-table-column>
@@ -214,11 +204,12 @@
         }
       },
       // 新增 / 修改
-      addOrUpdateHandle (id) {
+      addOrUpdateHandle (type, id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(id)
         })
+        console.log(type, id)
       },
       uploadExcel (id) {
         this.uploadVisible = true
@@ -306,6 +297,18 @@
             }
           })
         })
+      },
+      handleCommand (result) {
+        this.addOrUpdateVisible = true
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init(result.id, result.command)
+        })
+      },
+      composeValue (command, id) {
+        return {
+          'command': command,
+          'id': id
+        }
       }
     }
   }
