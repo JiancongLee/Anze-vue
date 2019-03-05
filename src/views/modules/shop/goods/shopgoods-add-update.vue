@@ -18,7 +18,7 @@
         <el-row>
           <el-col :span="11">
             <el-form-item label="品牌" prop="brandId">
-              <el-select v-model="dataForm.categoryId" placeholder="请选择">
+              <el-select v-model="dataForm.brandId" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -88,24 +88,44 @@
           </el-radio-group>
         </el-form-item>
 
+        <el-form-item label="商品单位" prop="goodsUnit">
+          <el-input v-model="dataForm.goodsUnit" placeholder="商品单位"></el-input>
+        </el-form-item>
+
+        <el-form-item label="商品主图" prop="primaryPicUrl">
+          <el-upload
+            :action="uploadUrl"
+            :limit="1"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dataForm.primaryPicUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+
+        <el-form-item label="列表图" prop="listPicUrl">
+          <el-upload
+            :action="uploadUrl"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisibleList">
+            <img width="100%" :src="dataForm.listPicUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+
         <el-form-item label="商品简介" prop="goodsBrief">
           <el-input v-model="dataForm.goodsBrief" placeholder="商品简介"></el-input>
         </el-form-item>
         <el-form-item label="商品详情" prop="goodsDesc">
-          <!--<el-input v-model="dataForm.goodsDesc" placeholder="商品详情"></el-input>-->
-
-
-          <editor :init="editorInit" v-model="dataForm.goodsDesc"/>
-
-        </el-form-item>
-        <el-form-item label="商品单位" prop="goodsUnit">
-          <el-input v-model="dataForm.goodsUnit" placeholder="商品单位"></el-input>
-        </el-form-item>
-        <el-form-item label="商品主图" prop="primaryPicUrl">
-          <el-input v-model="dataForm.primaryPicUrl" placeholder="商品主图"></el-input>
-        </el-form-item>
-        <el-form-item label="商品列表图" prop="listPicUrl">
-          <el-input v-model="dataForm.listPicUrl" placeholder="商品列表图"></el-input>
+          <tinymce ref="richText" v-model="dataForm.goodsDesc"></tinymce>
         </el-form-item>
 
         <el-card class="box-card">
@@ -164,11 +184,10 @@
 </template>
 
 <script>
-  // import Editor from '@tinymce/tinymce-vue'
-  import Editor from '@tinymce/tinymce-vue'
-  // import 'tinymce/themes/modern/theme'
+  import tinymce from '@/components/Tinymce'
+  window.tinymce.baseURL = '/static/tinymce' // 需要调用tinymce的组件中得加入这，不然会报错
   export default {
-    components: { Editor },
+    components: { tinymce },
     data () {
       return {
         visible: false,
@@ -192,78 +211,74 @@
           isNew: '',
           isOnSale: '',
           isHot: '',
-          isDelete: '',
-          createUserId: '',
-          createTime: '',
-          updateUserId: '',
-          updateTime: ''
+          // 0
+          size: '',
+          color: '',
+          type: '',
+          amount: '',
+          style: '',
+          // 1
+          netWeight: '',
+          packagingMethod: '',
+          qualityGuaranteePeriod: '',
+          series: '',
+          storageMethod: '',
+          // 2
+          model: '',
+          defectsLiabilityPeriod: ''
         },
         newKeyword: '',
         keywords: [],
         dataRule: {
-          name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          brandId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          categoryId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          goodsNumber: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          keywords: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          counterPrice: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          price: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          goodsBrief: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          goodsDesc: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          sortOrder: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          goodsUnit: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          primaryPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          listPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          isNew: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          isOnSale: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          isHot: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          isDelete: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          createUserId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          createTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          updateUserId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          updateTime: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          // name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // brandId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // categoryId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // goodsNumber: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // keywords: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // counterPrice: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // price: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // goodsBrief: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // goodsDesc: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // sortOrder: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // goodsUnit: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // primaryPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // listPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // isNew: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // isOnSale: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // isHot: [{ required: true, message: '不能为空', trigger: 'blur' }]
         },
         options: [{
-          value: '选项1',
+          value: '1',
           label: '黄金糕'
         }, {
-          value: '选项2',
+          value: '2',
           label: '双皮奶'
         }, {
-          value: '选项3',
+          value: '3',
           label: '蚵仔煎'
         }, {
-          value: '选项4',
+          value: '4',
           label: '龙须面'
         }, {
-          value: '选项5',
+          value: '5',
           label: '北京烤鸭'
         }],
         value: '',
-        editorInit: {
-          anguage_url: '/static/tinymce/zh_CN.js',
-          language: 'zh_CN',
-          skin_url: '/static/tinymce/skins/lightgray',
-          convert_urls: false,
-          plugins: ['advlist anchor autolink autosave code codesample colorpicker colorpicker contextmenu directionality emoticons fullscreen hr image imagetools importcss insertdatetime link lists media nonbreaking noneditable pagebreak paste preview print save searchreplace spellchecker tabfocus table template textcolor textpattern visualblocks visualchars wordcount'],
-          toolbar: ['searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample', 'hr bullist numlist link image charmap preview anchor pagebreak insertdatetime media table emoticons forecolor backcolor fullscreen'],
-          images_upload_handler: function (blobInfo, success, failure) {
-            // const formData = new FormData()
-            // formData.append('file', blobInfo.blob())
-            // createStorage(formData).then(res => {
-            //   success(res.data.data.url)
-            // }).catch(() => {
-            //   failure('上传失败，请重新上传')
-            // })
-            console.log(blobInfo)
-          }
-        }
+        dialogImageUrl: '',
+        dialogVisible: false,
+        dialogVisibleList: false,
+        uploadUrl: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`)
       }
+    },
+    mounted () {
+      let aa = {}
+      this.$set(aa, 'ass', '212')
+      console.log(aa)
     },
     methods: {
       init (id, kind) {
         this.dataForm.id = id || ''
-        this.dataForm.kind = kind || ''
+        this.dataForm.kind = kind
         this.visible = true
         this.newKeyword = ''
         this.keywords = []
@@ -271,34 +286,46 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/shopgoods/info`),
+              url: this.$http.adornUrl(`/viewshopgoods/info`),
               method: 'get',
               params: this.$http.adornParams({
                 'id': this.dataForm.id
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.name = data.shopgoods.name
-                this.dataForm.brandId = data.shopgoods.brandId
-                this.dataForm.categoryId = data.shopgoods.categoryId
-                this.dataForm.goodsNumber = data.shopgoods.goodsNumber
-                this.dataForm.keywords = data.shopgoods.keywords
-                this.dataForm.counterPrice = data.shopgoods.counterPrice
-                this.dataForm.price = data.shopgoods.price
-                this.dataForm.goodsBrief = data.shopgoods.goodsBrief
-                this.dataForm.goodsDesc = data.shopgoods.goodsDesc
-                this.dataForm.sortOrder = data.shopgoods.sortOrder
-                this.dataForm.goodsUnit = data.shopgoods.goodsUnit
-                this.dataForm.primaryPicUrl = data.shopgoods.primaryPicUrl
-                this.dataForm.listPicUrl = data.shopgoods.listPicUrl
-                this.dataForm.isNew = data.shopgoods.isNew
-                this.dataForm.isOnSale = data.shopgoods.isOnSale
-                this.dataForm.isHot = data.shopgoods.isHot
-                this.dataForm.isDelete = data.shopgoods.isDelete
-                this.dataForm.createUserId = data.shopgoods.createUserId
-                this.dataForm.createTime = data.shopgoods.createTime
-                this.dataForm.updateUserId = data.shopgoods.updateUserId
-                this.dataForm.updateTime = data.shopgoods.updateTime
+                debugger
+                this.dataForm.id = data.viewshopgoods.id
+                this.dataForm.name = data.viewshopgoods.name
+                this.dataForm.kind = data.viewshopgoods.kind
+                this.dataForm.brandId = data.viewshopgoods.brandId
+                this.dataForm.categoryId = data.viewshopgoods.categoryId
+                this.dataForm.goodsNumber = data.viewshopgoods.goodsNumber
+                this.dataForm.keywords = data.viewshopgoods.keywords
+                this.dataForm.counterPrice = data.viewshopgoods.counterPrice
+                this.dataForm.price = data.viewshopgoods.price
+                this.dataForm.goodsBrief = data.viewshopgoods.goodsBrief
+                this.dataForm.sortOrder = data.viewshopgoods.sortOrder
+                this.dataForm.goodsUnit = data.viewshopgoods.goodsUnit
+                this.dataForm.primaryPicUrl = data.viewshopgoods.primaryPicUrl
+                this.dataForm.listPicUrl = data.viewshopgoods.listPicUrl
+                this.dataForm.isNew = data.viewshopgoods.isNew
+                this.dataForm.isOnSale = data.viewshopgoods.isOnSale
+                this.dataForm.isHot = data.viewshopgoods.isHot
+                // 0
+                this.dataForm.size = data.viewshopgoods.size
+                this.dataForm.color = data.viewshopgoods.color
+                this.dataForm.type = data.viewshopgoods.type
+                this.dataForm.amount = data.viewshopgoods.amount
+                this.dataForm.style = data.viewshopgoods.style
+                // 1
+                this.dataForm.netWeight = data.viewshopgoods.netWeight
+                this.dataForm.packagingMethod = data.viewshopgoods.packagingMethod
+                this.dataForm.qualityGuaranteePeriod = data.viewshopgoods.qualityGuaranteePeriod
+                this.dataForm.series = data.viewshopgoods.series
+                this.dataForm.storageMethod = data.viewshopgoods.storageMethod
+                // 2
+                this.dataForm.model = data.viewshopgoods.model
+                this.dataForm.defectsLiabilityPeriod = data.viewshopgoods.defectsLiabilityPeriod
               }
             })
           }
@@ -325,19 +352,7 @@
             'listPicUrl': this.dataForm.listPicUrl,
             'isNew': this.dataForm.isNew,
             'isOnSale': this.dataForm.isOnSale,
-            'isHot': this.dataForm.isHot,
-            'isDelete': this.dataForm.isDelete,
-            'createUserId': this.dataForm.createUserId,
-            'createTime': this.dataForm.createTime,
-            'updateUserId': this.dataForm.updateUserId,
-            'updateTime': this.dataForm.updateTime
-          }
-          if (this.dataForm.kind === 0) {
-            console.log('0')
-          } else if (this.dataForm.kind === 1) {
-            console.log('1')
-          } else if (this.dataForm.kind === 1) {
-            console.log('2')
+            'isHot': this.dataForm.isHot
           }
           if (valid) {
             this.$http({
@@ -346,19 +361,47 @@
               data: this.$http.adornData(data)
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    this.$emit('refreshDataList')
-                  }
+                console.log(data)
+                let temp = {'id': !this.dataForm.id ? data.goods.id : this.dataForm.id}
+                let postUrl = ''
+                if (this.dataForm.kind === 0) {
+                  this.$set(temp, 'size', this.dataForm.size)
+                  this.$set(temp, 'color', this.dataForm.color)
+                  this.$set(temp, 'type', this.dataForm.type)
+                  this.$set(temp, 'amount', this.dataForm.amount)
+                  this.$set(temp, 'style', this.dataForm.style)
+                  postUrl = this.$http.adornUrl(`/shopgoodsgeneralmerchandise/${!this.dataForm.id ? 'add' : 'update'}`)
+                } else if (this.dataForm.kind === 1) {
+                  this.$set(temp, 'netWeight', this.dataForm.netWeight)
+                  this.$set(temp, 'packagingMethod', this.dataForm.packagingMethod)
+                  this.$set(temp, 'qualityGuaranteePeriod', this.dataForm.qualityGuaranteePeriod)
+                  this.$set(temp, 'series', this.dataForm.series)
+                  this.$set(temp, 'storageMethod', this.dataForm.storageMethod)
+                  postUrl = this.$http.adornUrl(`/shopgoodsfood/${!this.dataForm.id ? 'add' : 'update'}`)
+                } else if (this.dataForm.kind === 2) {
+                  this.$set(temp, 'model', this.dataForm.model)
+                  this.$set(temp, 'defectsLiabilityPeriod', this.dataForm.defectsLiabilityPeriod)
+                  postUrl = this.$http.adornUrl(`/shopgoodsmechanicalequipment/${!this.dataForm.id ? 'add' : 'update'}`)
+                }
+                this.$http({
+                  url: postUrl,
+                  method: 'post',
+                  data: this.$http.adornData(temp)
+                }).then(({data}) => {
+                  this.$message({
+                    message: '操作成功',
+                    type: 'success',
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false
+                      this.$emit('refreshDataList')
+                    }
+                  })
                 })
-              } else {
-                this.$message.error(data.msg)
               }
             })
+          } else {
+            this.$message.error(data.msg)
           }
         })
       },
@@ -380,6 +423,33 @@
         this.$nextTick(_ => {
           this.$refs.newKeywordInput.$refs.input.focus()
         })
+      },
+      handleRemove (file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePictureCardPreview (file) {
+        console.log('+++++++')
+        console.log(file)
+        this.dialogVisible = true
+      },
+      handleAvatarSuccess (res, file) {
+        console.log('------')
+        console.log(res)
+        console.log(file)
+      },
+      beforeAvatarUpload (file) {
+        // 文件类型进行判断
+        console.log(file)
+        const isJPG = file.type === 'image/jpeg'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return isJPG && isLt2M
       }
     }
   }

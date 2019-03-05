@@ -1,24 +1,16 @@
 <template>
   <div class="mod-config">
-    <div ref="shopgoodsFrom" >
+    <div ref="baseannexFrom" >
       <el-form :inline="true" :model="dataForm"  @keyup.enter.native="getDataList()">
         <el-form-item>
           <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
-          <el-dropdown @command="handleCommand" trigger="click">
-            <el-button v-if="isAuth('shopgoods:add')" type="primary"> 新增<i class="el-icon-arrow-down el-icon--right"></i></el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="composeValue(0,'')">百货</el-dropdown-item>
-              <el-dropdown-item :command="composeValue(1,'')">食品</el-dropdown-item>
-              <el-dropdown-item :command="composeValue(2,'')">器械设备</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-
-          <!--<el-button v-if="isAuth('shopgoods:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
-          <el-button v-if="isAuth('shopgoods:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
-          <el-button v-if="isAuth('shopgoods:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
+          <el-button v-if="isAuth('baseannex:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
+          <el-button v-if="isAuth('baseannex:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <el-button v-if="isAuth('baseannex:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
+          <el-button v-if="isAuth('baseannex:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -29,7 +21,7 @@
       border
       stripe
       :height="tableHight"
-      ref="shopgoodsTable"
+      ref="baseannexTable"
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       @row-click="toggleSelection"
@@ -41,52 +33,88 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="id"
         header-align="center"
         align="center"
-        label="商品名称">
+        label="主键表">
       </el-table-column>
       <el-table-column
-        prop="brandId"
+        prop="annexType"
         header-align="center"
         align="center"
-        label="品牌id">
+        label="附件类型：0图片 1文件">
       </el-table-column>
       <el-table-column
-        prop="categoryId"
+        prop="fileType"
         header-align="center"
         align="center"
-        label="商品类别ID">
+        label="文件类型">
       </el-table-column>
       <el-table-column
-        prop="goodsNumber"
+        prop="annexName"
         header-align="center"
         align="center"
-        label="序列号">
+        label="附件名称">
       </el-table-column>
       <el-table-column
-        prop="primaryPicUrl"
+        prop="basePath"
         header-align="center"
         align="center"
-        label="商品主图">
+        label="基础路径">
       </el-table-column>
       <el-table-column
-        prop="isNew"
+        prop="datePath"
         header-align="center"
         align="center"
-        label="是否新品">
+        label="日期分类路径">
       </el-table-column>
       <el-table-column
-        prop="isOnSale"
+        prop="fileName"
         header-align="center"
         align="center"
-        label="是否在售">
+        label="文件名称">
       </el-table-column>
       <el-table-column
-        prop="isHot"
+        prop="uploadDate"
         header-align="center"
         align="center"
-        label="是否热销">
+        label="上传时间">
+      </el-table-column>
+      <el-table-column
+        prop="absolutePath"
+        header-align="center"
+        align="center"
+        label="附件绝对路径">
+      </el-table-column>
+      <el-table-column
+        prop="uploadUserId"
+        header-align="center"
+        align="center"
+        label="上传人id">
+      </el-table-column>
+      <el-table-column
+        prop="uploadUserName"
+        header-align="center"
+        align="center"
+        label="上传人姓名">
+      </el-table-column>
+      <el-table-column
+        prop="updateDate"
+        header-align="center"
+        align="center"
+        label="更新时间">
+      </el-table-column>
+      <el-table-column
+        prop="updateUserId"
+        header-align="center"
+        align="center"
+        label="更新人id">
+      </el-table-column>
+      <el-table-column
+        prop="updateUserName"
+        header-align="center"
+        align="center"
+        label="更新人姓名">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -95,7 +123,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id,scope.row.kind)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
+          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
           <el-button type="text" size="small"  class="red" v-on:click.stop="deleteHandle(scope.row.id)"><icon-svg name="shanchu" class="icon"></icon-svg>删除</el-button>
         </template>
       </el-table-column>
@@ -117,7 +145,7 @@
 </template>
 
 <script>
-  import AddOrUpdate from './shopgoods-add-update'
+  import AddOrUpdate from './baseannex-add-update'
   export default {
     data () {
       return {
@@ -154,14 +182,14 @@
       this.getDataList()
     },
     mounted () {
-      this.offsetHeight = this.$refs.shopgoodsFrom.offsetHeight
+      this.offsetHeight = this.$refs.baseannexFrom.offsetHeight
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shopgoods/list'),
+          url: this.$http.adornUrl('/baseannex/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -198,22 +226,16 @@
       // 触发一行的
       toggleSelection (row) {
         if (row) {
-          this.$refs.shopgoodsTable.toggleRowSelection(row)
+          this.$refs.baseannexTable.toggleRowSelection(row)
         } else {
-          this.$refs.shopgoodsTable.clearSelection()
+          this.$refs.baseannexTable.clearSelection()
         }
       },
       // 新增 / 修改
-      addOrUpdateHandle (id, type) {
+      addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id, type)
-        })
-      },
-      handleCommand (result) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(result.id, result.command)
+          this.$refs.addOrUpdate.init(id)
         })
       },
       uploadExcel (id) {
@@ -229,32 +251,24 @@
           type: 'warning'
         })
         this.$axios({
-          url: this.$http.adornUrl(`/shopgoods/export?token=${this.$cookie.get('token')}`),
+          url: this.$http.adornUrl(`/baseannex/export?token=${this.$cookie.get('token')}`),
           method: 'GET',
           responseType: 'blob',
           params: {
             id: '',
-            name: '',
-            brandId: '',
-            categoryId: '',
-            goodsNumber: '',
-            keywords: '',
-            counterPrice: '',
-            price: '',
-            goodsBrief: '',
-            goodsDesc: '',
-            sortOrder: '',
-            goodsUnit: '',
-            primaryPicUrl: '',
-            listPicUrl: '',
-            isNew: '',
-            isOnSale: '',
-            isHot: '',
-            isDelete: '',
-            createUserId: '',
-            createTime: '',
+            annexType: '',
+            fileType: '',
+            annexName: '',
+            basePath: '',
+            datePath: '',
+            fileName: '',
+            uploadDate: '',
+            absolutePath: '',
+            uploadUserId: '',
+            uploadUserName: '',
+            updateDate: '',
             updateUserId: '',
-            updateTime: ''
+            updateUserName: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})
@@ -284,7 +298,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/shopgoods/delete'),
+            url: this.$http.adornUrl('/baseannex/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -302,12 +316,6 @@
             }
           })
         })
-      },
-      composeValue (command, id) {
-        return {
-          'command': command,
-          'id': id
-        }
       }
     }
   }
