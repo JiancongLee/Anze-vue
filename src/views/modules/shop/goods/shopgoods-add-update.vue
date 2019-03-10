@@ -20,10 +20,10 @@
             <el-form-item label="品牌" prop="brandId">
               <el-select v-model="dataForm.brandId" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in brandList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -267,7 +267,8 @@
         dialogImageUrl: '',
         dialogVisible: false,
         dialogVisibleList: false,
-        uploadUrl: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`)
+        uploadUrl: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
+        brandList: []
       }
     },
     mounted () {
@@ -330,6 +331,8 @@
             })
           }
         })
+        // 获取品牌列表
+        this.getBrandList()
       },
       // 表单提交
       dataFormSubmit () {
@@ -450,6 +453,15 @@
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
         return isJPG && isLt2M
+      },
+      getBrandList () {
+        this.$http({
+          url: this.$http.adornUrl('/shopbrand/list'),
+          method: 'get'
+        }).then(({data}) => {
+          console.log(data)
+          this.brandList = data.list
+        })
       }
     }
   }

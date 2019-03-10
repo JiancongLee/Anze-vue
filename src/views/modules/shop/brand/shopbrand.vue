@@ -8,7 +8,6 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopbrand:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopbrand:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
           <el-button v-if="isAuth('shopbrand:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopbrand:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -33,22 +32,10 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        label="主键">
-      </el-table-column>
-      <el-table-column
         prop="name"
         header-align="center"
         align="center"
         label="品牌名称">
-      </el-table-column>
-      <el-table-column
-        prop="listPicUrl"
-        header-align="center"
-        align="center"
-        label="图片">
       </el-table-column>
       <el-table-column
         prop="simpleDesc"
@@ -69,40 +56,16 @@
         label="排序">
       </el-table-column>
       <el-table-column
-        prop="isShow"
+        prop="createTime"
         header-align="center"
         align="center"
-        label="显示">
+        label="创建时间">
       </el-table-column>
       <el-table-column
-        prop="floorPrice"
+        prop="updateTime"
         header-align="center"
         align="center"
-        label="FloorPrice">
-      </el-table-column>
-      <el-table-column
-        prop="appListPicUrl"
-        header-align="center"
-        align="center"
-        label="app显示图片">
-      </el-table-column>
-      <el-table-column
-        prop="isNew"
-        header-align="center"
-        align="center"
-        label="新品牌">
-      </el-table-column>
-      <el-table-column
-        prop="newPicUrl"
-        header-align="center"
-        align="center"
-        label="图片">
-      </el-table-column>
-      <el-table-column
-        prop="newSortOrder"
-        header-align="center"
-        align="center"
-        label="排序">
+        label="更新时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -177,7 +140,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shopbrand/list'),
+          url: this.$http.adornUrl('/shopbrand/page'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -245,16 +208,11 @@
           params: {
             id: '',
             name: '',
-            listPicUrl: '',
             simpleDesc: '',
             picUrl: '',
             sortOrder: '',
-            isShow: '',
-            floorPrice: '',
-            appListPicUrl: '',
-            isNew: '',
-            newPicUrl: '',
-            newSortOrder: ''
+            createTime: '',
+            updateTime: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})

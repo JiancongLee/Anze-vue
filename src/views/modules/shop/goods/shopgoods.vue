@@ -75,18 +75,30 @@
         header-align="center"
         align="center"
         label="是否新品">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isNew === 0" size="small" type="info">否</el-tag>
+          <el-tag v-if="scope.row.isNew === 1" size="small" type="success">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="isOnSale"
         header-align="center"
         align="center"
         label="是否在售">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isOnSale === 0" size="small" type="info">否</el-tag>
+          <el-tag v-if="scope.row.isOnSale === 1" size="small" type="success">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="isHot"
         header-align="center"
         align="center"
         label="是否热销">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isHot === 0" size="small" type="info">否</el-tag>
+          <el-tag v-if="scope.row.isHot === 1" size="small" type="success">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         fixed="right"
