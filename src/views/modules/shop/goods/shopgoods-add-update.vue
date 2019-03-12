@@ -54,8 +54,9 @@
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-form-item label="关键字">
-          <el-tag v-for="tag in keywords" :key="tag" closable type="primary" @close="handleClose(tag)">
+          <el-tag v-for="tag in stringToList(dataForm.keywords)" :key="tag" closable type="primary" @close="handleClose(tag)">
             {{ tag }}
           </el-tag>
           <el-input
@@ -92,7 +93,8 @@
           <el-input v-model="dataForm.goodsUnit" placeholder="商品单位"></el-input>
         </el-form-item>
 
-        <el-form-item label="商品主图" prop="primaryPicUrl">
+        <el-form-item label="商品主图" prop="primaryPicId">
+          <img v-if="dataForm.primaryPicId" :src="reversedMessage(dataForm.primaryPicId)" class="avatar" width="148px" height="148px" @click="aaa">
           <el-upload
             :action="uploadUrl"
             :limit="1"
@@ -100,15 +102,16 @@
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <i class="el-icon-plus"></i>
+            :before-upload="beforeAvatarUpload"
+            v-else>
+            <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dataForm.primaryPicUrl" alt="">
+            <img width="100%" :src="reversedMessage(dataForm.primaryPicId)" alt="">
           </el-dialog>
         </el-form-item>
 
-        <el-form-item label="列表图" prop="listPicUrl">
+        <el-form-item label="列表图" prop="listPicIds">
           <el-upload
             :action="uploadUrl"
             list-type="picture-card"
@@ -117,7 +120,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisibleList">
-            <img width="100%" :src="dataForm.listPicUrl" alt="">
+            <img width="100%" :src="dataForm.listPicIds" alt="">
           </el-dialog>
         </el-form-item>
 
@@ -206,7 +209,7 @@
           goodsDesc: '',
           sortOrder: '',
           goodsUnit: '',
-          primaryPicUrl: '',
+          primaryPicId: '',
           listPicUrl: '',
           isNew: '',
           isOnSale: '',
@@ -241,7 +244,7 @@
           // goodsDesc: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // sortOrder: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // goodsUnit: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // primaryPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // primaryPicId: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // listPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isNew: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isOnSale: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -272,11 +275,16 @@
       }
     },
     mounted () {
-      let aa = {}
-      this.$set(aa, 'ass', '212')
-      console.log(aa)
+    },
+    computed: {
     },
     methods: {
+      aaa () {
+        this.dialogVisible = true
+      },
+      reversedMessage (id) {
+        return this.$http.adornUrl(`/baseannex/viewImage?id=` + id + `&token=${this.$cookie.get('token')}`)
+      },
       init (id, kind) {
         this.dataForm.id = id || ''
         this.dataForm.kind = kind
@@ -294,7 +302,6 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                debugger
                 this.dataForm.id = data.viewshopgoods.id
                 this.dataForm.name = data.viewshopgoods.name
                 this.dataForm.kind = data.viewshopgoods.kind
@@ -307,8 +314,8 @@
                 this.dataForm.goodsBrief = data.viewshopgoods.goodsBrief
                 this.dataForm.sortOrder = data.viewshopgoods.sortOrder
                 this.dataForm.goodsUnit = data.viewshopgoods.goodsUnit
-                this.dataForm.primaryPicUrl = data.viewshopgoods.primaryPicUrl
-                this.dataForm.listPicUrl = data.viewshopgoods.listPicUrl
+                this.dataForm.primaryPicId = data.viewshopgoods.primaryPicId
+                this.dataForm.listPicIds = data.viewshopgoods.listPicIds
                 this.dataForm.isNew = data.viewshopgoods.isNew
                 this.dataForm.isOnSale = data.viewshopgoods.isOnSale
                 this.dataForm.isHot = data.viewshopgoods.isHot
@@ -351,7 +358,7 @@
             'goodsDesc': this.dataForm.goodsDesc,
             'sortOrder': this.dataForm.sortOrder,
             'goodsUnit': this.dataForm.goodsUnit,
-            'primaryPicUrl': this.dataForm.primaryPicUrl,
+            'primaryPicId': this.dataForm.primaryPicId,
             'listPicUrl': this.dataForm.listPicUrl,
             'isNew': this.dataForm.isNew,
             'isOnSale': this.dataForm.isOnSale,
@@ -408,19 +415,30 @@
           }
         })
       },
+      // 增加标签
       handleInputConfirm () {
         const newKeyword = this.newKeyword
         if (newKeyword) {
+          if (this.dataForm.keywords === '') {
+            this.keywords = []
+          } else {
+            let temp = this.stringToList(this.dataForm.keywords)
+            console.log(temp)
+            this.keywords = temp.concat()
+            console.log(this.keywords)
+          }
           this.keywords.push(newKeyword)
           this.dataForm.keywords = this.keywords.toString()
         }
         this.newKeywordVisible = false
         this.newKeyword = ''
       },
+      // 删除标签
       handleClose (tag) {
         this.keywords.splice(this.keywords.indexOf(tag), 1)
         this.dataForm.keywords = this.keywords.toString()
       },
+      // 弹出标签输入框
       showInput () {
         this.newKeywordVisible = true
         this.$nextTick(_ => {
@@ -431,18 +449,18 @@
         console.log(file, fileList)
       },
       handlePictureCardPreview (file) {
-        console.log('+++++++')
-        console.log(file)
         this.dialogVisible = true
       },
+      /**
+       * 主图成功上传回调函数
+       * @param res
+       * @param file
+       */
       handleAvatarSuccess (res, file) {
-        console.log('------')
-        console.log(res)
-        console.log(file)
+        this.dataForm.primaryPicId = res.batch[0].id
       },
       beforeAvatarUpload (file) {
         // 文件类型进行判断
-        console.log(file)
         const isJPG = file.type === 'image/jpeg'
         const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -462,6 +480,9 @@
           console.log(data)
           this.brandList = data.list
         })
+      },
+      stringToList (str) {
+        return str.split(',')
       }
     }
   }

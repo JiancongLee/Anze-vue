@@ -65,7 +65,7 @@
         label="序列号">
       </el-table-column>
       <el-table-column
-        prop="primaryPicUrl"
+        prop="primaryPicId"
         header-align="center"
         align="center"
         label="商品主图">
@@ -257,7 +257,7 @@
             goodsDesc: '',
             sortOrder: '',
             goodsUnit: '',
-            primaryPicUrl: '',
+            primaryPicId: '',
             listPicUrl: '',
             isNew: '',
             isOnSale: '',
