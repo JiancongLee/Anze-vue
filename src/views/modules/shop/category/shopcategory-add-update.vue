@@ -4,100 +4,79 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     center>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="Id" prop="id">
-            <el-input v-model="dataForm.id" placeholder="Id"></el-input>
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="名称"></el-input>
-        </el-form-item>
-        <el-form-item label="Keywords" prop="keywords">
-            <el-input v-model="dataForm.keywords" placeholder="Keywords"></el-input>
-        </el-form-item>
-        <el-form-item label="FrontDesc" prop="frontDesc">
-            <el-input v-model="dataForm.frontDesc" placeholder="FrontDesc"></el-input>
-        </el-form-item>
-        <el-form-item label="ParentId" prop="parentId">
-            <el-input v-model="dataForm.parentId" placeholder="ParentId"></el-input>
-        </el-form-item>
-        <el-form-item label="SortOrder" prop="sortOrder">
-            <el-input v-model="dataForm.sortOrder" placeholder="SortOrder"></el-input>
-        </el-form-item>
-        <el-form-item label="ShowIndex" prop="showIndex">
-            <el-input v-model="dataForm.showIndex" placeholder="ShowIndex"></el-input>
-        </el-form-item>
-        <el-form-item label="IsShow" prop="isShow">
-            <el-input v-model="dataForm.isShow" placeholder="IsShow"></el-input>
-        </el-form-item>
-        <el-form-item label="BannerUrl" prop="bannerUrl">
-            <el-input v-model="dataForm.bannerUrl" placeholder="BannerUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="IconUrl" prop="iconUrl">
-            <el-input v-model="dataForm.iconUrl" placeholder="IconUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="ImgUrl" prop="imgUrl">
-            <el-input v-model="dataForm.imgUrl" placeholder="ImgUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="WapBannerUrl" prop="wapBannerUrl">
-            <el-input v-model="dataForm.wapBannerUrl" placeholder="WapBannerUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="Level" prop="level">
-            <el-input v-model="dataForm.level" placeholder="Level"></el-input>
-        </el-form-item>
-        <el-form-item label="Type" prop="type">
-            <el-input v-model="dataForm.type" placeholder="Type"></el-input>
-        </el-form-item>
-        <el-form-item label="FrontName" prop="frontName">
-            <el-input v-model="dataForm.frontName" placeholder="FrontName"></el-input>
-        </el-form-item>
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+      <el-row>
+        <el-col :span="11">
+          <el-form-item label="级别" prop="level">
+            <el-radio-group v-model="dataForm.level">
+              <el-radio :label=0>L1</el-radio>
+              <el-radio :label=1>L2</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="11" :offset="1" v-if="dataForm.level ===1">
+          <el-form-item label="父节点" prop="parentId">
+            <el-select v-model="dataForm.parentId" placeholder="请选择">
+              <el-option
+                v-for="item in secondCategoryOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-            </el-col>
-        </el-row>
-
+      <el-form-item label="名称" prop="name">
+          <el-input v-model="dataForm.name" placeholder="名称"></el-input>
+      </el-form-item>
+      <el-form-item label="关键字" prop="keywords">
+        <el-tag v-for="tag in stringToList(dataForm.keywords)" :key="tag" closable type="primary" @close="handleClose(tag)">
+          {{ tag }}
+        </el-tag>
+        <el-input
+          v-if="newKeywordVisible"
+          ref="newKeywordInput"
+          v-model="newKeyword"
+          class="input-new-keyword"
+          size="small"
+          @keyup.enter.native="handleInputConfirm"
+          @blur="handleInputConfirm"/>
+        <el-button v-else class="button-new-keyword" size="small" type="primary" @click="showInput">+ 增加</el-button>
+      </el-form-item>
+      <el-row>
+        <el-col :span="11">
+          <el-form-item label="排序" prop="sortOrder">
+            <el-input-number v-model="dataForm.sortOrder" controls-position="right" :min="0" label="排序号"></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="11" :offset="1">
+          <el-form-item label="是否显示" prop="isShow">
+            <el-radio-group v-model="dataForm.isShow">
+              <el-radio :label=1>是</el-radio>
+              <el-radio :label=0>否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item label="描述" prop="desc">
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 2, maxRows: 4}"
+          placeholder="请输入内容"
+          v-model="dataForm.desc">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="banner图片" prop="bannerUrl">
+          <el-input v-model="dataForm.bannerUrl" placeholder="banner图片"></el-input>
+      </el-form-item>
+      <el-form-item label="icon图片" prop="iconUrl">
+          <el-input v-model="dataForm.iconUrl" placeholder="icon图片"></el-input>
+      </el-form-item>
+      <el-form-item label="图片" prop="imgUrl">
+          <el-input v-model="dataForm.imgUrl" placeholder="图片"></el-input>
+      </el-form-item>
 
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -112,39 +91,35 @@
     data () {
       return {
         visible: false,
+        newKeywordVisible: false,
         dataForm: {
           id: '',
-          name: '',
-          keywords: '',
-          frontDesc: '',
           parentId: '',
+          name: '',
+          level: '',
+          keywords: '',
+          desc: '',
           sortOrder: '',
-          showIndex: '',
           isShow: '',
           bannerUrl: '',
           iconUrl: '',
-          imgUrl: '',
-          wapBannerUrl: '',
-          level: '',
-          type: '',
-          frontName: ''
+          imgUrl: ''
         },
+        radio2: 3,
+        newKeyword: '',
+        keywords: [],
+        secondCategoryOptions: [],
         dataRule: {
-          id: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          keywords: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          frontDesc: [{ required: true, message: '不能为空', trigger: 'blur' }],
           parentId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          level: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          keywords: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          desc: [{ required: true, message: '不能为空', trigger: 'blur' }],
           sortOrder: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          showIndex: [{ required: true, message: '不能为空', trigger: 'blur' }],
           isShow: [{ required: true, message: '不能为空', trigger: 'blur' }],
           bannerUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
           iconUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          imgUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          wapBannerUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          level: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          type: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          frontName: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          imgUrl: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
       }
     },
@@ -159,29 +134,26 @@
               url: this.$http.adornUrl(`/shopcategory/info`),
               method: 'get',
               params: this.$http.adornParams({
-                '': this.dataForm.id
+                'id': this.dataForm.id
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.id = data.shopcategory.id
-                this.dataForm.name = data.shopcategory.name
-                this.dataForm.keywords = data.shopcategory.keywords
-                this.dataForm.frontDesc = data.shopcategory.frontDesc
                 this.dataForm.parentId = data.shopcategory.parentId
+                this.dataForm.name = data.shopcategory.name
+                this.dataForm.level = data.shopcategory.level
+                this.dataForm.keywords = data.shopcategory.keywords
+                this.dataForm.desc = data.shopcategory.desc
                 this.dataForm.sortOrder = data.shopcategory.sortOrder
-                this.dataForm.showIndex = data.shopcategory.showIndex
                 this.dataForm.isShow = data.shopcategory.isShow
                 this.dataForm.bannerUrl = data.shopcategory.bannerUrl
                 this.dataForm.iconUrl = data.shopcategory.iconUrl
                 this.dataForm.imgUrl = data.shopcategory.imgUrl
-                this.dataForm.wapBannerUrl = data.shopcategory.wapBannerUrl
-                this.dataForm.level = data.shopcategory.level
-                this.dataForm.type = data.shopcategory.type
-                this.dataForm.frontName = data.shopcategory.frontName
               }
             })
           }
         })
+        // 初始化数据
+        this.getSecondCategoryList()
       },
       // 表单提交
       dataFormSubmit () {
@@ -191,21 +163,17 @@
               url: this.$http.adornUrl(`/shopcategory/${!this.dataForm.id ? 'add' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
-                'id': this.dataForm.id,
-                'name': this.dataForm.name,
-                'keywords': this.dataForm.keywords,
-                'frontDesc': this.dataForm.frontDesc,
+                'id': this.dataForm.id || undefined,
                 'parentId': this.dataForm.parentId,
+                'name': this.dataForm.name,
+                'level': this.dataForm.level,
+                'keywords': this.dataForm.keywords,
+                'desc': this.dataForm.desc,
                 'sortOrder': this.dataForm.sortOrder,
-                'showIndex': this.dataForm.showIndex,
                 'isShow': this.dataForm.isShow,
                 'bannerUrl': this.dataForm.bannerUrl,
                 'iconUrl': this.dataForm.iconUrl,
-                'imgUrl': this.dataForm.imgUrl,
-                'wapBannerUrl': this.dataForm.wapBannerUrl,
-                'level': this.dataForm.level,
-                'type': this.dataForm.type,
-                'frontName': this.dataForm.frontName
+                'imgUrl': this.dataForm.imgUrl
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
@@ -224,7 +192,65 @@
             })
           }
         })
+      },
+      stringToList (str) {
+        if (str === '') {
+          return []
+        } else {
+          return str.split(',')
+        }
+      },
+      // 增加标签
+      handleInputConfirm () {
+        const newKeyword = this.newKeyword
+        if (newKeyword) {
+          if (this.dataForm.keywords === '') {
+            this.keywords = []
+          } else {
+            let temp = this.stringToList(this.dataForm.keywords)
+            this.keywords = temp.concat()
+          }
+          this.keywords.push(newKeyword)
+          this.dataForm.keywords = this.keywords.toString()
+        }
+        this.newKeywordVisible = false
+        this.newKeyword = ''
+      },
+      // 删除标签
+      handleClose (tag) {
+        this.keywords.splice(this.keywords.indexOf(tag), 1)
+        this.dataForm.keywords = this.keywords.toString()
+      },
+      // 弹出标签输入框
+      showInput () {
+        this.newKeywordVisible = true
+        this.$nextTick(_ => {
+          this.$refs.newKeywordInput.$refs.input.focus()
+        })
+      },
+      // 获取二级商品类型
+      getSecondCategoryList () {
+        this.$http({
+          url: this.$http.adornUrl('/shopcategory/list'),
+          method: 'get',
+          params: {
+            level: 0
+          }
+        }).then(({data}) => {
+          this.secondCategoryOptions = data.list
+        })
       }
     }
   }
 </script>
+
+<style>
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .input-new-keyword {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+</style>

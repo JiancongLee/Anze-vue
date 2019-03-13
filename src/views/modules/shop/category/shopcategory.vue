@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
           <el-button v-if="isAuth('shopcategory:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
-          <el-button v-if="isAuth('shopcategory:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>
+          <!--<el-button v-if="isAuth('shopcategory:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopcategory:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
           <el-button v-if="isAuth('shopcategory:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"><icon-svg name="shanchu1" class="icon"></icon-svg> 批量删除</el-button>
         </el-form-item>
@@ -33,10 +33,10 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="id"
+        prop="parentId"
         header-align="center"
         align="center"
-        label="Id">
+        label="父级id">
       </el-table-column>
       <el-table-column
         prop="name"
@@ -45,82 +45,60 @@
         label="名称">
       </el-table-column>
       <el-table-column
+        prop="level"
+        header-align="center"
+        align="center"
+        label="级别">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.level === 0" size="small" type="info">L1</el-tag>
+          <el-tag v-if="scope.row.level === 1" size="small" type="success">L2</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="keywords"
         header-align="center"
         align="center"
-        label="Keywords">
+        label="关键字">
       </el-table-column>
       <el-table-column
-        prop="frontDesc"
+        prop="desc"
         header-align="center"
         align="center"
-        label="FrontDesc">
-      </el-table-column>
-      <el-table-column
-        prop="parentId"
-        header-align="center"
-        align="center"
-        label="ParentId">
+        label="描述">
       </el-table-column>
       <el-table-column
         prop="sortOrder"
         header-align="center"
         align="center"
-        label="SortOrder">
-      </el-table-column>
-      <el-table-column
-        prop="showIndex"
-        header-align="center"
-        align="center"
-        label="ShowIndex">
+        label="排序">
       </el-table-column>
       <el-table-column
         prop="isShow"
         header-align="center"
         align="center"
-        label="IsShow">
+        label="是否显示">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isShow === 0" size="small" type="danger">否</el-tag>
+          <el-tag v-if="scope.row.isShow === 1" size="small" type="success">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="bannerUrl"
         header-align="center"
         align="center"
-        label="BannerUrl">
+        label="banner图片">
       </el-table-column>
       <el-table-column
         prop="iconUrl"
         header-align="center"
         align="center"
-        label="IconUrl">
+        label="icon图片">
       </el-table-column>
       <el-table-column
         prop="imgUrl"
         header-align="center"
         align="center"
-        label="ImgUrl">
-      </el-table-column>
-      <el-table-column
-        prop="wapBannerUrl"
-        header-align="center"
-        align="center"
-        label="WapBannerUrl">
-      </el-table-column>
-      <el-table-column
-        prop="level"
-        header-align="center"
-        align="center"
-        label="Level">
-      </el-table-column>
-      <el-table-column
-        prop="type"
-        header-align="center"
-        align="center"
-        label="Type">
-      </el-table-column>
-      <el-table-column
-        prop="frontName"
-        header-align="center"
-        align="center"
-        label="FrontName">
+        label="图片">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -195,7 +173,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shopcategory/list'),
+          url: this.$http.adornUrl('/shopcategory/page'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -262,20 +240,18 @@
           responseType: 'blob',
           params: {
             id: '',
-            name: '',
-            keywords: '',
-            frontDesc: '',
             parentId: '',
+            name: '',
+            level: '',
+            keywords: '',
+            desc: '',
             sortOrder: '',
-            showIndex: '',
             isShow: '',
             bannerUrl: '',
             iconUrl: '',
             imgUrl: '',
-            wapBannerUrl: '',
-            level: '',
-            type: '',
-            frontName: ''
+            updateTime: '',
+            createTime: ''
           }
         }).then((response) => {
           const blob = new Blob([response.data], {type: response.data.type})
