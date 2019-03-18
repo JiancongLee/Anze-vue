@@ -51,17 +51,20 @@
             <el-input v-model="dataForm.userLevelCode" placeholder="会员等级code"></el-input>
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-            <el-input v-model="dataForm.avatar" placeholder="头像"></el-input>
-          <!--<el-upload-->
-            <!--action="https://jsonplaceholder.typicode.com/posts/"-->
-            <!--list-type="picture-card"-->
-            <!--:on-preview="handlePictureCardPreview"-->
-            <!--:on-remove="handleRemove">-->
-            <!--<i class="el-icon-plus"></i>-->
-          <!--</el-upload>-->
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dataForm.avatar" alt="">
-          </el-dialog>
+            <!--<el-input v-model="dataForm.avatar" placeholder="头像"></el-input>-->
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="dataForm.avatar" :src="dataForm.avatar" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <!--<el-dialog :visible.sync="dialogVisible">-->
+            <!--<img width="100%" :src="dataForm.avatar" alt="">-->
+          <!--</el-dialog>-->
+
         </el-form-item>
         <el-form-item label="微信id" prop="weixinOpenid">
             <el-input v-model="dataForm.weixinOpenid" placeholder="微信id"></el-input>
@@ -149,7 +152,7 @@
           id: [{ required: true, message: '不能为空', trigger: 'blur' }],
           username: [{ required: true, message: '不能为空', trigger: 'blur' }],
           password: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          status: [{ required: true, message: '状态：0可用, 1禁用, 2注销不能为空', trigger: 'blur' }],
+          status: [{ required: true, message: '不能为空', trigger: 'blur' }],
           gender: [{ required: true, message: '不能为空', trigger: 'blur' }],
           birthday: [{ required: true, message: '不能为空', trigger: 'blur' }],
           registerTime: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -252,7 +255,49 @@
             })
           }
         })
+      },
+      handleAvatarSuccess (res, file) {
+        this.dataForm.avatar = URL.createObjectURL(file.raw)
+      },
+      beforeAvatarUpload (file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return isJPG && isLt2M
       }
     }
   }
 </script>
+
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>
+

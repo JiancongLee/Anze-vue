@@ -32,7 +32,7 @@
           <el-input v-model="dataForm.name" placeholder="名称"></el-input>
       </el-form-item>
       <el-form-item label="关键字" prop="keywords">
-        <el-tag v-for="tag in stringToList(dataForm.keywords)" :key="tag" closable type="primary" @close="handleClose(tag)">
+        <el-tag v-for="tag in keywordsList" :key="tag" closable type="primary" @close="handleClose(tag)">
           {{ tag }}
         </el-tag>
         <el-input
@@ -87,6 +87,7 @@
 </template>
 
 <script>
+  import { stringToList } from '@/utils'
   export default {
     data () {
       return {
@@ -121,6 +122,13 @@
           iconUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
           imgUrl: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
+      }
+    },
+    mounted () {
+    },
+    computed: {
+      keywordsList: function () {
+        return stringToList(this.dataForm.keywords)
       }
     },
     methods: {
@@ -193,13 +201,6 @@
           }
         })
       },
-      stringToList (str) {
-        if (str === '') {
-          return []
-        } else {
-          return str.split(',')
-        }
-      },
       // 增加标签
       handleInputConfirm () {
         const newKeyword = this.newKeyword
@@ -207,7 +208,7 @@
           if (this.dataForm.keywords === '') {
             this.keywords = []
           } else {
-            let temp = this.stringToList(this.dataForm.keywords)
+            let temp = stringToList(this.dataForm.keywords)
             this.keywords = temp.concat()
           }
           this.keywords.push(newKeyword)

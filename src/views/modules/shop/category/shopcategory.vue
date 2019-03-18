@@ -15,16 +15,8 @@
       </el-form>
     </div>
     <el-table
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
       :data="dataList"
       border
-      stripe
-      :height="tableHight"
-      ref="shopcategoryTable"
-      v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      @row-click="toggleSelection"
       style="width: 100%;">
       <el-table-column
         type="selection"
@@ -38,12 +30,13 @@
         align="center"
         label="父级id">
       </el-table-column>
-      <el-table-column
+      <table-tree-column
         prop="name"
         header-align="center"
-        align="center"
+        treeKey="id"
+        width="250"
         label="名称">
-      </el-table-column>
+      </table-tree-column>
       <el-table-column
         prop="level"
         header-align="center"
@@ -112,15 +105,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
       <!--弹窗上传-->
@@ -130,6 +114,8 @@
 
 <script>
   import AddOrUpdate from './shopcategory-add-update'
+  import TableTreeColumn from '@/components/table-tree-column'
+  import { treeDataTranslate } from '@/utils'
   export default {
     data () {
       return {
@@ -150,7 +136,8 @@
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      TableTreeColumn
     },
     computed: {
       documentClientHeight: {
@@ -173,47 +160,19 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shopcategory/page'),
+          url: this.$http.adornUrl('/shopcategory/list'),
           method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'key': this.dataForm.key
-          })
+          params: this.$http.adornParams({})
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = treeDataTranslate(data.list, 'id')
+            console.log(this.dataList)
           } else {
             this.dataList = []
-            this.totalPage = 0
           }
           this.tableHight = this.$store.state.common.documentClientHeight - this.offsetHeight - 169
           this.dataListLoading = false
         })
-      },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle (val) {
-        this.dataListSelections = val
-      },
-      // 触发一行的
-      toggleSelection (row) {
-        if (row) {
-          this.$refs.shopcategoryTable.toggleRowSelection(row)
-        } else {
-          this.$refs.shopcategoryTable.clearSelection()
-        }
       },
       // 新增 / 修改
       addOrUpdateHandle (id) {

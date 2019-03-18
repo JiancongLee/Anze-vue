@@ -18,9 +18,9 @@
         <el-row>
           <el-col :span="11">
             <el-form-item label="品牌" prop="brandId">
-              <el-select v-model="value1" placeholder="请选择">
+              <el-select v-model="dataForm.brandId" placeholder="请选择">
                 <el-option
-                  v-for="item in options1"
+                  v-for="item in brandList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
@@ -28,12 +28,16 @@
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="11" :offset="1">
             <el-form-item label="商品类别" prop="categoryId">
               <el-cascader
                 :options="options"
-                change-on-select
-                style="width: 200px">
+                :props="categoryTreeProps"
+                v-model="treeOptions"
+                @change="handleChangeCategory"
+                :active-item-change="aaa"
+               style="width: 300px">
               </el-cascader>
             </el-form-item>
           </el-col>
@@ -53,7 +57,7 @@
         </el-row>
 
         <el-form-item label="关键字">
-          <el-tag v-for="tag in stringToList(dataForm.keywords)" :key="tag" closable type="primary" @close="handleClose(tag)">
+          <el-tag v-for="tag in keywordsList" :key="tag" closable type="primary" @close="handleClose(tag)">
             {{ tag }}
           </el-tag>
           <el-input
@@ -90,12 +94,8 @@
           <el-input v-model="dataForm.goodsUnit" placeholder="商品单位"></el-input>
         </el-form-item>
 
-
-
-
-
         <el-form-item label="商品主图" prop="primaryPicId">
-          <img v-if="dataForm.primaryPicId" :src="reversedMessage(dataForm.primaryPicId)" class="avatar" width="148px" height="148px" @click="aaa">
+          <!--<img v-if="dataForm.primaryPicId" :src="reversedMessage(dataForm.primaryPicId)" class="avatar" width="148px" height="148px" @click="clickPrimaryPic">-->
           <el-upload
             :action="uploadUrl"
             :limit="1"
@@ -110,9 +110,6 @@
             <img width="100%" :src="reversedMessage(dataForm.primaryPicId)" alt="">
           </el-dialog>
         </el-form-item>
-
-
-
 
         <el-form-item label="列表图" prop="listPicIds">
           <el-upload
@@ -191,6 +188,7 @@
 
 <script>
   import tinymce from '@/components/Tinymce'
+  import { treeDataTranslate, stringToList } from '@/utils'
   window.tinymce.baseURL = '/static/tinymce' // 需要调用tinymce的组件中得加入这，不然会报错
   export default {
     components: { tinymce },
@@ -198,6 +196,11 @@
       return {
         visible: false,
         newKeywordVisible: false,
+        categoryTreeProps: {
+          label: 'name',
+          children: 'children',
+          value: 'id'
+        },
         dataForm: {
           id: '',
           kind: '',
@@ -253,240 +256,42 @@
           // isOnSale: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isHot: [{ required: true, message: '不能为空', trigger: 'blur' }]
         },
-        options: [{
-          value: 'zhinan',
-          label: '指南',
-          children: [{
-            value: 'shejiyuanze',
-            label: '设计原则',
-            children: [{
-              value: 'yizhi',
-              label: '一致'
-            }, {
-              value: 'fankui',
-              label: '反馈'
-            }, {
-              value: 'xiaolv',
-              label: '效率'
-            }, {
-              value: 'kekong',
-              label: '可控'
-            }]
-          }, {
-            value: 'daohang',
-            label: '导航',
-            children: [{
-              value: 'cexiangdaohang',
-              label: '侧向导航'
-            }, {
-              value: 'dingbudaohang',
-              label: '顶部导航'
-            }]
-          }]
-        }, {
-          value: 'zujian',
-          label: '组件',
-          children: [{
-            value: 'basic',
-            label: 'Basic',
-            children: [{
-              value: 'layout',
-              label: 'Layout 布局'
-            }, {
-              value: 'color',
-              label: 'Color 色彩'
-            }, {
-              value: 'typography',
-              label: 'Typography 字体'
-            }, {
-              value: 'icon',
-              label: 'Icon 图标'
-            }, {
-              value: 'button',
-              label: 'Button 按钮'
-            }]
-          }, {
-            value: 'form',
-            label: 'Form',
-            children: [{
-              value: 'radio',
-              label: 'Radio 单选框'
-            }, {
-              value: 'checkbox',
-              label: 'Checkbox 多选框'
-            }, {
-              value: 'input',
-              label: 'Input 输入框'
-            }, {
-              value: 'input-number',
-              label: 'InputNumber 计数器'
-            }, {
-              value: 'select',
-              label: 'Select 选择器'
-            }, {
-              value: 'cascader',
-              label: 'Cascader 级联选择器'
-            }, {
-              value: 'switch',
-              label: 'Switch 开关'
-            }, {
-              value: 'slider',
-              label: 'Slider 滑块'
-            }, {
-              value: 'time-picker',
-              label: 'TimePicker 时间选择器'
-            }, {
-              value: 'date-picker',
-              label: 'DatePicker 日期选择器'
-            }, {
-              value: 'datetime-picker',
-              label: 'DateTimePicker 日期时间选择器'
-            }, {
-              value: 'upload',
-              label: 'Upload 上传'
-            }, {
-              value: 'rate',
-              label: 'Rate 评分'
-            }, {
-              value: 'form',
-              label: 'Form 表单'
-            }]
-          }, {
-            value: 'data',
-            label: 'Data',
-            children: [{
-              value: 'table',
-              label: 'Table 表格'
-            }, {
-              value: 'tag',
-              label: 'Tag 标签'
-            }, {
-              value: 'progress',
-              label: 'Progress 进度条'
-            }, {
-              value: 'tree',
-              label: 'Tree 树形控件'
-            }, {
-              value: 'pagination',
-              label: 'Pagination 分页'
-            }, {
-              value: 'badge',
-              label: 'Badge 标记'
-            }]
-          }, {
-            value: 'notice',
-            label: 'Notice',
-            children: [{
-              value: 'alert',
-              label: 'Alert 警告'
-            }, {
-              value: 'loading',
-              label: 'Loading 加载'
-            }, {
-              value: 'message',
-              label: 'Message 消息提示'
-            }, {
-              value: 'message-box',
-              label: 'MessageBox 弹框'
-            }, {
-              value: 'notification',
-              label: 'Notification 通知'
-            }]
-          }, {
-            value: 'navigation',
-            label: 'Navigation',
-            children: [{
-              value: 'menu',
-              label: 'NavMenu 导航菜单'
-            }, {
-              value: 'tabs',
-              label: 'Tabs 标签页'
-            }, {
-              value: 'breadcrumb',
-              label: 'Breadcrumb 面包屑'
-            }, {
-              value: 'dropdown',
-              label: 'Dropdown 下拉菜单'
-            }, {
-              value: 'steps',
-              label: 'Steps 步骤条'
-            }]
-          }, {
-            value: 'others',
-            label: 'Others',
-            children: [{
-              value: 'dialog',
-              label: 'Dialog 对话框'
-            }, {
-              value: 'tooltip',
-              label: 'Tooltip 文字提示'
-            }, {
-              value: 'popover',
-              label: 'Popover 弹出框'
-            }, {
-              value: 'card',
-              label: 'Card 卡片'
-            }, {
-              value: 'carousel',
-              label: 'Carousel 走马灯'
-            }, {
-              value: 'collapse',
-              label: 'Collapse 折叠面板'
-            }]
-          }]
-        }, {
-          value: 'ziyuan',
-          label: '资源',
-          children: [{
-            value: 'axure',
-            label: 'Axure Components'
-          }, {
-            value: 'sketch',
-            label: 'Sketch Templates'
-          }, {
-            value: 'jiaohu',
-            label: '组件交互文档'
-          }]
-        }],
+        options: [],
         value: '',
         dialogImageUrl: '',
         dialogVisible: false,
         dialogVisibleList: false,
         uploadUrl: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
-        brandList: [],
-        options1: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value1: ''
+        brandList: []
       }
     },
     mounted () {
     },
     computed: {
+      treeOptions: {
+        get: function () {
+          return stringToList(this.dataForm.categoryId)
+        },
+        set: function () {}
+      },
+      keywordsList: function () {
+        return stringToList(this.dataForm.keywords)
+      }
     },
     methods: {
-      aaa () {
+      // 处理商品种类的改变
+      handleChangeCategory (value) {
+        this.dataForm.categoryId = value.toString()
+      },
+      clickPrimaryPic () {
         this.dialogVisible = true
       },
       reversedMessage (id) {
         return this.$http.adornUrl(`/baseannex/viewImage?id=` + id + `&token=${this.$cookie.get('token')}`)
       },
-      init (id, kind) {
+      // 初始化页面
+      init (id) {
         this.dataForm.id = id || ''
-        this.dataForm.kind = kind
         this.visible = true
         this.newKeyword = ''
         this.keywords = []
@@ -501,6 +306,7 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
+                console.log(data)
                 this.dataForm.id = data.viewshopgoods.id
                 this.dataForm.name = data.viewshopgoods.name
                 this.dataForm.kind = data.viewshopgoods.kind
@@ -508,6 +314,9 @@
                 this.dataForm.categoryId = data.viewshopgoods.categoryId
                 this.dataForm.goodsNumber = data.viewshopgoods.goodsNumber
                 this.dataForm.keywords = data.viewshopgoods.keywords
+                if (this.dataForm.keywords !== '') {
+                  this.keywords = stringToList(this.dataForm.keywords)
+                }
                 this.dataForm.counterPrice = data.viewshopgoods.counterPrice
                 this.dataForm.price = data.viewshopgoods.price
                 this.dataForm.goodsBrief = data.viewshopgoods.goodsBrief
@@ -539,6 +348,12 @@
         })
         // 获取品牌列表
         this.getBrandList()
+        // 获取商品类别列表
+        this.getCategoryList()
+      },
+      aaa (list) {
+        console.log(list)
+        alert('hahah')
       },
       // 表单提交
       dataFormSubmit () {
@@ -570,7 +385,6 @@
               data: this.$http.adornData(data)
             }).then(({data}) => {
               if (data && data.code === 0) {
-                console.log(data)
                 let temp = {'id': !this.dataForm.id ? data.goods.id : this.dataForm.id}
                 let postUrl = ''
                 if (this.dataForm.kind === 0) {
@@ -621,7 +435,7 @@
           if (this.dataForm.keywords === '') {
             this.keywords = []
           } else {
-            let temp = this.stringToList(this.dataForm.keywords)
+            let temp = stringToList(this.dataForm.keywords)
             this.keywords = temp.concat()
           }
           this.keywords.push(newKeyword)
@@ -648,11 +462,7 @@
       handlePictureCardPreview (file) {
         this.dialogVisible = true
       },
-      /**
-       * 主图成功上传回调函数
-       * @param res
-       * @param file
-       */
+      // 主图成功上传回调函数
       handleAvatarSuccess (res, file) {
         this.dataForm.primaryPicId = res.batch[0].id
       },
@@ -669,21 +479,29 @@
         }
         return isJPG && isLt2M
       },
+      // 获取品牌列表
       getBrandList () {
         this.$http({
           url: this.$http.adornUrl('/shopbrand/list'),
           method: 'get'
         }).then(({data}) => {
-          console.log(data)
           this.brandList = data.list
         })
       },
-      stringToList (str) {
-        if (str === '') {
-          return []
-        } else {
-          return str.split(',')
-        }
+      // 获取数据列表
+      getCategoryList () {
+        this.dataListLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/shopcategory/list'),
+          method: 'get',
+          params: this.$http.adornParams({})
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.options = treeDataTranslate(data.list, 'id', 'parentId')
+          } else {
+            this.options = []
+          }
+        })
       }
     }
   }

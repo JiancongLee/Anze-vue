@@ -7,14 +7,15 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="getDataList()"><icon-svg name="chaxun" class="icon"></icon-svg> 查询</el-button>
-          <el-dropdown @command="handleCommand" trigger="click">
-            <el-button v-if="isAuth('shopgoods:add')" type="primary"> 新增<i class="el-icon-arrow-down el-icon--right"></i></el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="composeValue(0,'')">百货</el-dropdown-item>
-              <el-dropdown-item :command="composeValue(1,'')">食品</el-dropdown-item>
-              <el-dropdown-item :command="composeValue(2,'')">器械设备</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <el-button v-if="isAuth('shopcategory:add')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="addNew" class="icon"></icon-svg>  新增</el-button>
+          <!--<el-dropdown @command="handleCommand" trigger="click">-->
+            <!--<el-button v-if="isAuth('shopgoods:add')" type="primary"> 新增<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i></el-button>-->
+            <!--<el-dropdown-menu slot="dropdown">-->
+              <!--<el-dropdown-item :command="composeValue(0,'')">百货</el-dropdown-item>-->
+              <!--<el-dropdown-item :command="composeValue(1,'')">食品</el-dropdown-item>-->
+              <!--<el-dropdown-item :command="composeValue(2,'')">器械设备</el-dropdown-item>-->
+            <!--</el-dropdown-menu>-->
+          <!--</el-dropdown>-->
 
           <!--<el-button v-if="isAuth('shopgoods:add')" type="primary" @click="uploadExcel()"><icon-svg name="yunduanshangchuan" class="icon"></icon-svg>  导入</el-button>-->
           <el-button v-if="isAuth('shopgoods:add')" type="primary" :disabled="this.downloadDisable" @click="exportExcel()"><icon-svg name="yunduanxiazai" class="icon"></icon-svg>  导出</el-button>
@@ -107,7 +108,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id,scope.row.kind)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
+          <el-button type="text" size="small" v-on:click.stop="addOrUpdateHandle(scope.row.id)"> <icon-svg name="bianjisekuai" class="icon"></icon-svg>修改</el-button>
           <el-button type="text" size="small"  class="red" v-on:click.stop="deleteHandle(scope.row.id)"><icon-svg name="shanchu" class="icon"></icon-svg>删除</el-button>
         </template>
       </el-table-column>
@@ -216,10 +217,10 @@
         }
       },
       // 新增 / 修改
-      addOrUpdateHandle (id, type) {
+      addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id, type)
+          this.$refs.addOrUpdate.init(id)
         })
       },
       handleCommand (result) {
