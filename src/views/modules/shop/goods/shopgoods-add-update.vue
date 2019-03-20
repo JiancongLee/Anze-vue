@@ -36,7 +36,7 @@
                 :props="categoryTreeProps"
                 v-model="treeOptions"
                 @change="handleChangeCategory"
-                :active-item-change="aaa"
+                @active-item-change="aaa"
                style="width: 300px">
               </el-cascader>
             </el-form-item>
@@ -97,6 +97,7 @@
         <el-form-item label="商品主图" prop="primaryPicId">
           <!--<img v-if="dataForm.primaryPicId" :src="reversedMessage(dataForm.primaryPicId)" class="avatar" width="148px" height="148px" @click="clickPrimaryPic">-->
           <el-upload
+            ref="upload1"
             :action="uploadUrl"
             :limit="1"
             list-type="picture-card"
@@ -106,20 +107,21 @@
             :before-upload="beforeAvatarUpload">
             <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
+          <el-dialog :visible.sync="dialogVisible" append-to-body>
             <img width="100%" :src="reversedMessage(dataForm.primaryPicId)" alt="">
           </el-dialog>
         </el-form-item>
 
         <el-form-item label="列表图" prop="listPicIds">
           <el-upload
+            ref="upload2"
             :action="uploadUrl"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisibleList">
+          <el-dialog :visible.sync="dialogVisibleList" append-to-body>
             <img width="100%" :src="dataForm.listPicIds" alt="">
           </el-dialog>
         </el-form-item>
@@ -276,6 +278,9 @@
       },
       keywordsList: function () {
         return stringToList(this.dataForm.keywords)
+      },
+      fileList: function () {
+        return 'a'
       }
     },
     methods: {
@@ -292,9 +297,16 @@
       // 初始化页面
       init (id) {
         this.dataForm.id = id || ''
+        this.dataForm.kind = -1
         this.visible = true
         this.newKeyword = ''
         this.keywords = []
+        if (this.$refs.upload1) {
+          this.$refs.upload1.clearFiles()
+        }
+        if (this.$refs.upload2) {
+          this.$refs.upload2.clearFiles()
+        }
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -306,7 +318,6 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                console.log(data)
                 this.dataForm.id = data.viewshopgoods.id
                 this.dataForm.name = data.viewshopgoods.name
                 this.dataForm.kind = data.viewshopgoods.kind
@@ -351,9 +362,19 @@
         // 获取商品类别列表
         this.getCategoryList()
       },
-      aaa (list) {
-        console.log(list)
-        alert('hahah')
+      aaa (value) {
+        console.log(value)
+        if (value !== null) {
+          let arr = value[0]
+
+          if (arr === '1105689374504255490') {
+            this.dataForm.kind = 0
+          } else if (arr === '1105763766827483137') {
+            this.dataForm.kind = 1
+          } else if (arr === '1106189387651088385') {
+            this.dataForm.kind = 2
+          }
+        }
       },
       // 表单提交
       dataFormSubmit () {
@@ -466,6 +487,7 @@
       handleAvatarSuccess (res, file) {
         this.dataForm.primaryPicId = res.batch[0].id
       },
+      // 主图上传前
       beforeAvatarUpload (file) {
         // 文件类型进行判断
         const isJPG = file.type === 'image/jpeg'

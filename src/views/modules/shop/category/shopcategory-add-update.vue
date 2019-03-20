@@ -9,7 +9,7 @@
         <el-col :span="11">
           <el-form-item label="级别" prop="level">
             <el-radio-group v-model="dataForm.level">
-              <el-radio :label=0>L1</el-radio>
+              <el-radio :label=0 disabled>L1</el-radio>
               <el-radio :label=1>L2</el-radio>
             </el-radio-group>
           </el-form-item>
