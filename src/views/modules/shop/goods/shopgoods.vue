@@ -48,6 +48,12 @@
         label="商品名称">
       </el-table-column>
       <el-table-column
+        prop="goodsNumber"
+        header-align="center"
+        align="center"
+        label="序列号">
+      </el-table-column>
+      <el-table-column
         prop="brandId"
         header-align="center"
         align="center"
@@ -58,12 +64,6 @@
         header-align="center"
         align="center"
         label="商品类别ID">
-      </el-table-column>
-      <el-table-column
-        prop="goodsNumber"
-        header-align="center"
-        align="center"
-        label="序列号">
       </el-table-column>
       <el-table-column
         prop="primaryPicId"

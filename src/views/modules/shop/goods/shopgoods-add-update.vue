@@ -3,6 +3,7 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    style="width: 100%"
     center>
 
     <el-card class="box-card">
@@ -36,7 +37,7 @@
                 :props="categoryTreeProps"
                 v-model="treeOptions"
                 @change="handleChangeCategory"
-                @active-item-change="aaa"
+                @active-item-change="categoryChange"
                style="width: 300px">
               </el-cascader>
             </el-form-item>
@@ -103,32 +104,38 @@
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
+            :file-list="showPictures"
+            :before-remove="aaa"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
             <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" append-to-body>
-            <img width="100%" :src="reversedMessage(dataForm.primaryPicId)" alt="">
-          </el-dialog>
         </el-form-item>
+
+        <el-dialog :visible.sync="dialogVisible" append-to-body>
+          <img width="100%" :src="reversedMessage(picId)" alt="">
+        </el-dialog>
+
 
         <el-form-item label="列表图" prop="listPicIds">
           <el-upload
             ref="upload2"
             :action="uploadUrl"
             list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
+            :file-list="showPictureList"
+            :on-preview="handlePictureListPreview"
+            :on-success="handlePictureListSuccess"
             :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisibleList" append-to-body>
-            <img width="100%" :src="dataForm.listPicIds" alt="">
-          </el-dialog>
         </el-form-item>
+
+
 
         <el-form-item label="商品简介" prop="goodsBrief">
           <el-input v-model="dataForm.goodsBrief" placeholder="商品简介"></el-input>
         </el-form-item>
+
         <el-form-item label="商品详情" prop="goodsDesc">
           <tinymce ref="richText" v-model="dataForm.goodsDesc"></tinymce>
         </el-form-item>
@@ -189,7 +196,7 @@
 </template>
 
 <script>
-  import tinymce from '@/components/Tinymce'
+  import tinymce from '@/components/TinyMce'
   import { treeDataTranslate, stringToList } from '@/utils'
   window.tinymce.baseURL = '/static/tinymce' // 需要调用tinymce的组件中得加入这，不然会报错
   export default {
@@ -218,7 +225,7 @@
           sortOrder: '',
           goodsUnit: '',
           primaryPicId: '',
-          listPicUrl: '',
+          listPicIds: '',
           isNew: '',
           isOnSale: '',
           isHot: '',
@@ -253,7 +260,7 @@
           // sortOrder: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // goodsUnit: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // primaryPicId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // listPicUrl: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          // listPicIds: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isNew: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isOnSale: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // isHot: [{ required: true, message: '不能为空', trigger: 'blur' }]
@@ -262,9 +269,10 @@
         value: '',
         dialogImageUrl: '',
         dialogVisible: false,
-        dialogVisibleList: false,
         uploadUrl: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
-        brandList: []
+        brandList: [],
+        picId: '',
+        pictureList: []
       }
     },
     mounted () {
@@ -279,17 +287,37 @@
       keywordsList: function () {
         return stringToList(this.dataForm.keywords)
       },
-      fileList: function () {
-        return 'a'
+      showPictures: function () {
+        if (this.dataForm.primaryPicId !== '') {
+          return [{url: this.reversedMessage(this.dataForm.primaryPicId)}]
+        } else {
+          return []
+        }
+      },
+      showPictureList: function () {
+        let data = []
+        if (this.dataForm.listPicIds !== '') {
+          let arr = this.dataForm.listPicIds.split(',')
+          for (let i = 0; i < arr.length; i++) {
+            console.log(arr[i])
+            let _tmp = {url: this.reversedMessage(arr[i])}
+            data.push(_tmp)
+          }
+          // arr.forEach(function (value) {
+          //   console.log(value)
+          //   let ccc = this.$http.adornUrl(`/baseannex/viewImage?id=` + value + `&token=${this.$cookie.get('token')}`)
+          //   console.log(ccc)
+          //   // let _tmp = {url: this.reversedMessage(value)}
+          //   // data.push(_tmp)
+          // })
+        }
+        return data
       }
     },
     methods: {
       // 处理商品种类的改变
       handleChangeCategory (value) {
         this.dataForm.categoryId = value.toString()
-      },
-      clickPrimaryPic () {
-        this.dialogVisible = true
       },
       reversedMessage (id) {
         return this.$http.adornUrl(`/baseannex/viewImage?id=` + id + `&token=${this.$cookie.get('token')}`)
@@ -301,12 +329,9 @@
         this.visible = true
         this.newKeyword = ''
         this.keywords = []
-        if (this.$refs.upload1) {
-          this.$refs.upload1.clearFiles()
-        }
-        if (this.$refs.upload2) {
-          this.$refs.upload2.clearFiles()
-        }
+        // if (this.$refs['upload1']) {
+        //   this.$refs['upload1'].clearFiles()
+        // }
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -335,6 +360,9 @@
                 this.dataForm.goodsUnit = data.viewshopgoods.goodsUnit
                 this.dataForm.primaryPicId = data.viewshopgoods.primaryPicId
                 this.dataForm.listPicIds = data.viewshopgoods.listPicIds
+                if (this.dataForm.listPicIds !== '') {
+                  this.pictureList = stringToList(this.dataForm.listPicIds)
+                }
                 this.dataForm.isNew = data.viewshopgoods.isNew
                 this.dataForm.isOnSale = data.viewshopgoods.isOnSale
                 this.dataForm.isHot = data.viewshopgoods.isHot
@@ -355,6 +383,9 @@
                 this.dataForm.defectsLiabilityPeriod = data.viewshopgoods.defectsLiabilityPeriod
               }
             })
+          } else {
+            this.$refs['upload1'].clearFiles()
+            this.$refs['upload2'].clearFiles()
           }
         })
         // 获取品牌列表
@@ -362,11 +393,10 @@
         // 获取商品类别列表
         this.getCategoryList()
       },
-      aaa (value) {
+      categoryChange (value) {
         console.log(value)
         if (value !== null) {
           let arr = value[0]
-
           if (arr === '1105689374504255490') {
             this.dataForm.kind = 0
           } else if (arr === '1105763766827483137') {
@@ -394,7 +424,7 @@
             'sortOrder': this.dataForm.sortOrder,
             'goodsUnit': this.dataForm.goodsUnit,
             'primaryPicId': this.dataForm.primaryPicId,
-            'listPicUrl': this.dataForm.listPicUrl,
+            'listPicIds': this.dataForm.listPicIds,
             'isNew': this.dataForm.isNew,
             'isOnSale': this.dataForm.isOnSale,
             'isHot': this.dataForm.isHot
@@ -477,10 +507,37 @@
           this.$refs.newKeywordInput.$refs.input.focus()
         })
       },
+      // 删除图片
       handleRemove (file, fileList) {
-        console.log(file, fileList)
+        console.log(file)
+        console.log(fileList)
+        let url = file.url
+        let id = ''
+        let list = []
+        if (url !== '') {
+          id = url.substr(50, 19)
+          list.push(id)
+          this.$http({
+            url: this.$http.adornUrl(`/baseannex/delete`),
+            method: 'post',
+            data: this.$http.adornData(list, false)
+          }).then(({data}) => {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+              // duration: 150,
+              // onClose: () => {
+              //   this.visible = false
+              //   this.$emit('refreshDataList')
+              // }
+            })
+          })
+        }
       },
+      // 主图查看
       handlePictureCardPreview (file) {
+        console.log(file)
+        this.picId = this.dataForm.primaryPicId
         this.dialogVisible = true
       },
       // 主图成功上传回调函数
@@ -524,6 +581,21 @@
             this.options = []
           }
         })
+      },
+      // 图片列表查看
+      handlePictureListPreview (file) {
+        if (file.response.batch[0].id !== '') {
+          this.picId = file.response.batch[0].id
+        }
+        this.dialogVisible = true
+      },
+      // 列表图片成功上传回调函数
+      handlePictureListSuccess (res, file) {
+        this.pictureList.push(res.batch[0].id)
+        this.dataForm.listPicIds = this.pictureList.toString()
+      },
+      aaa (file, fileList) {
+        console.log(file)
       }
     }
   }
@@ -540,5 +612,8 @@
     width: 90px;
     margin-left: 10px;
     vertical-align: bottom;
+  }
+  .el-dialog {
+    width: 80%;
   }
 </style>

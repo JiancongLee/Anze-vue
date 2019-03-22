@@ -162,29 +162,23 @@
           file_picker_types: 'file',
           // 上传文件
           file_picker_callback: function (callback, value, meta) {
-            // let fileUploadControl = document.getElementById('photoFileUpload')
-            // fileUploadControl.click()
-            // fileUploadControl.onchange = function () {
-            //   if (fileUploadControl.files.length > 0) {
-            //     let localFile = fileUploadControl.files[0]
-            //     ossUpload({ type: localFile.type }).then(res => {
-            //       uploadImg(res.data, localFile).then(res => {
-            //         if (res.code === 0) {
-            //           callback(res.data.name, { text: localFile.name })
-            //           self.$emit('on-upload-complete', res)  // 抛出 'on-upload-complete' 钩子
-            //         } else {
-            //           callback()
-            //           self.$emit('on-upload-complete', res)  // 抛出 'on-upload-complete' 钩子
-            //         }
-            //       })
-            //     })
-            //   } else {
-            //     alert('请选择文件上传')
-            //   }
-            // }
+            console.log('hahahahha')
+            self.$http({
+              url: self.$http.adornUrl(`/baseannex/multiupload?token=${self.$cookie.get('token')}`),
+              method: 'get',
+              params: this.$http.adornParams({})
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                console.log(data)
+              } else {
+              }
+            })
           },
           // 图片上传
           images_upload_handler: function (blobInfo, success, failure) {
+            console.log(blobInfo)
+            console.log(success)
+            console.log(failure)
             if (blobInfo.blob().size > self.maxSize) {
               failure('文件体积过大')
             }
@@ -193,19 +187,22 @@
             } else {
               failure('图片格式错误')
             }
-
             function uploadPic () {
-              // ossUpload({ type: 'image/png' }).then(res => {
-              //   uploadImg(res.data, blobInfo.blob()).then(res => {
-              //     if (res.code === 0) {
-              //       success(res.data.name)
-              //       self.$emit('on-upload-complete', res)  // 抛出 'on-upload-complete' 钩子
-              //     } else {
-              //       failure('上传失败: ')
-              //       self.$emit('on-upload-complete', res)  // 抛出 'on-upload-complete' 钩子
-              //     }
-              //   })
-              // })
+              console.log('haha')
+              let form = new FormData()
+              form.append('file', blobInfo.blob())
+              self.$http({
+                url: self.$http.adornUrl(`/baseannex/multiupload`),
+                method: 'post',
+                data: form
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  console.log(data)
+                  success(self.$http.adornUrl(`/baseannex/viewImage?id=` + data.batch[0].id + `&token=${self.$cookie.get('token')}`))
+                } else {
+                  failure('上传失败')
+                }
+              })
             }
           },
           // prop内传入的的config
