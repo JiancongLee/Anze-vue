@@ -54,10 +54,10 @@
         label="序列号">
       </el-table-column>
       <el-table-column
-        prop="brandId"
+        prop="brandName"
         header-align="center"
         align="center"
-        label="品牌id">
+        label="品牌">
       </el-table-column>
       <el-table-column
         prop="categoryId"
@@ -174,7 +174,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shopgoods/list'),
+          url: this.$http.adornUrl('/viewshopgoods/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,

@@ -11,10 +11,10 @@ import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/a
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 import axios from 'axios'
-
+// import UploadCropper from '@/components/vue-upload-cropper'
 import FormMaking from './index'
 Vue.use(FormMaking)
-
+// Vue.use(UploadCropper) // 图片上传裁剪插件
 Vue.use(VueCookie)
 Vue.config.productionTip = false
 

@@ -96,7 +96,6 @@
         </el-form-item>
 
         <el-form-item label="商品主图" prop="primaryPicId">
-          <!--<img v-if="dataForm.primaryPicId" :src="reversedMessage(dataForm.primaryPicId)" class="avatar" width="148px" height="148px" @click="clickPrimaryPic">-->
           <el-upload
             ref="upload1"
             :action="uploadUrl"
@@ -105,7 +104,7 @@
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
             :file-list="showPictures"
-            :before-remove="aaa"
+            :before-remove="handleDeletePicture"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
             <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -129,8 +128,6 @@
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-
-
 
         <el-form-item label="商品简介" prop="goodsBrief">
           <el-input v-model="dataForm.goodsBrief" placeholder="商品简介"></el-input>
@@ -216,6 +213,8 @@
           name: '',
           brandId: '',
           categoryId: '',
+          firstLevelCategoryId: '',
+          secondLevelCategoryId: '',
           goodsNumber: '',
           keywords: '',
           counterPrice: '',
@@ -249,8 +248,8 @@
         keywords: [],
         dataRule: {
           // name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // brandId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // categoryId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          brandId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          categoryId: [{ required: true, message: '不能为空', trigger: 'blur' }]
           // goodsNumber: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // keywords: [{ required: true, message: '不能为空', trigger: 'blur' }],
           // counterPrice: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -299,7 +298,6 @@
         if (this.dataForm.listPicIds !== '') {
           let arr = this.dataForm.listPicIds.split(',')
           for (let i = 0; i < arr.length; i++) {
-            console.log(arr[i])
             let _tmp = {url: this.reversedMessage(arr[i])}
             data.push(_tmp)
           }
@@ -318,6 +316,8 @@
       // 处理商品种类的改变
       handleChangeCategory (value) {
         this.dataForm.categoryId = value.toString()
+        this.dataForm.firstLevelCategoryId = value[0]
+        this.dataForm.secondLevelCategoryId = value[1]
       },
       reversedMessage (id) {
         return this.$http.adornUrl(`/baseannex/viewImage?id=` + id + `&token=${this.$cookie.get('token')}`)
@@ -356,6 +356,7 @@
                 this.dataForm.counterPrice = data.viewshopgoods.counterPrice
                 this.dataForm.price = data.viewshopgoods.price
                 this.dataForm.goodsBrief = data.viewshopgoods.goodsBrief
+                this.dataForm.goodsDesc = data.viewshopgoods.goodsDesc
                 this.dataForm.sortOrder = data.viewshopgoods.sortOrder
                 this.dataForm.goodsUnit = data.viewshopgoods.goodsUnit
                 this.dataForm.primaryPicId = data.viewshopgoods.primaryPicId
@@ -394,7 +395,6 @@
         this.getCategoryList()
       },
       categoryChange (value) {
-        console.log(value)
         if (value !== null) {
           let arr = value[0]
           if (arr === '1105689374504255490') {
@@ -415,6 +415,8 @@
             'kind': this.dataForm.kind,
             'brandId': this.dataForm.brandId,
             'categoryId': this.dataForm.categoryId,
+            'firstLevelCategoryId': this.dataForm.firstLevelCategoryId,
+            'secondLevelCategoryId': this.dataForm.secondLevelCategoryId,
             'goodsNumber': this.dataForm.goodsNumber,
             'keywords': this.dataForm.keywords,
             'counterPrice': this.dataForm.counterPrice,
@@ -509,8 +511,6 @@
       },
       // 删除图片
       handleRemove (file, fileList) {
-        console.log(file)
-        console.log(fileList)
         let url = file.url
         let id = ''
         let list = []
@@ -524,8 +524,8 @@
           }).then(({data}) => {
             this.$message({
               message: '操作成功',
-              type: 'success'
-              // duration: 150,
+              type: 'success',
+              duration: 150
               // onClose: () => {
               //   this.visible = false
               //   this.$emit('refreshDataList')
@@ -536,7 +536,6 @@
       },
       // 主图查看
       handlePictureCardPreview (file) {
-        console.log(file)
         this.picId = this.dataForm.primaryPicId
         this.dialogVisible = true
       },
@@ -594,7 +593,8 @@
         this.pictureList.push(res.batch[0].id)
         this.dataForm.listPicIds = this.pictureList.toString()
       },
-      aaa (file, fileList) {
+      // 删除图片前的操作
+      handleDeletePicture (file, fileList) {
         console.log(file)
       }
     }
