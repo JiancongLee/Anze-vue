@@ -5,32 +5,53 @@
     :visible.sync="visible"
     center>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="品牌名称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="品牌名称"></el-input>
-        </el-form-item>
-        <el-form-item label="描述" prop="simpleDesc">
-            <el-input v-model="dataForm.simpleDesc" placeholder="描述"></el-input>
-        </el-form-item>
-        <el-form-item label="图片" prop="picUrl">
-            <!--<el-input v-model="dataForm.picUrl" placeholder="图片"></el-input>-->
-          <el-upload
-            ref="upload1"
-            :action="uploadUrl"
-            :limit="1"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :file-list="showPictures"
-            :before-remove="handleDeletePicture"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <i class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="排序" prop="sortOrder">
-            <el-input v-model="dataForm.sortOrder" placeholder="排序"></el-input>
-        </el-form-item>
+      <el-form-item label="品牌名称" prop="name">
+          <el-input v-model="dataForm.name" placeholder="品牌名称"></el-input>
+      </el-form-item>
+      <el-form-item label="描述" prop="simpleDesc">
+          <el-input v-model="dataForm.simpleDesc" placeholder="描述"></el-input>
+      </el-form-item>
+      <el-form-item label="图片" prop="picUrl">
+        <upload-cropper
+          :limit="3"
+          :limitSize="1024"
+          :on-change="handleOnChange"
+          :http-request="handleHttpRequest"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          :on-remove="handleRemove"
+          :fileList="showPictures"
+          :cropper="{
+        height: 700,
+        autoCrop: true,
+        autoCropWidth: 300,
+        autoCropHeight: 200,
+        fixed: true,
+        centerBox: 'true',
+        fixedNumber: [3, 2]
+        }">
+        </upload-cropper>
+        <!--<el-upload-->
+          <!--ref="upload1"-->
+          <!--:action="uploadUrl"-->
+          <!--:limit="1"-->
+          <!--list-type="picture-card"-->
+          <!--:on-preview="handlePictureCardPreview"-->
+          <!--:on-remove="handleRemove"-->
+          <!--:file-list="showPictures"-->
+          <!--:before-remove="handleDeletePicture"-->
+          <!--:on-success="handleAvatarSuccess"-->
+          <!--:before-upload="beforeAvatarUpload">-->
+          <!--<i class="el-icon-plus avatar-uploader-icon"></i>-->
+        <!--</el-upload>-->
+      </el-form-item>
+      <!--<el-dialog :visible.sync="dialogVisible" append-to-body>-->
+        <!--<img width="100%" :src="reversedMessage(picId)" alt="">-->
+      <!--</el-dialog>-->
 
+      <el-form-item label="排序" prop="sortOrder">
+          <el-input v-model="dataForm.sortOrder" placeholder="排序"></el-input>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -40,6 +61,7 @@
 </template>
 
 <script>
+  import UploadCropper from '@/components/vue-upload-cropper'
   export default {
     data () {
       return {
@@ -63,6 +85,9 @@
         dialogVisible: false,
         picId: ''
       }
+    },
+    components: {
+      UploadCropper
     },
     methods: {
       init (id) {
@@ -125,27 +150,6 @@
         this.picId = this.dataForm.picUrl
         this.dialogVisible = true
       },
-      // 删除图片
-      handleRemove (file, fileList) {
-        let url = file.url
-        let id = ''
-        let list = []
-        if (url !== '') {
-          id = url.substr(50, 19)
-          list.push(id)
-          this.$http({
-            url: this.$http.adornUrl(`/baseannex/delete`),
-            method: 'post',
-            data: this.$http.adornData(list, false)
-          }).then(({data}) => {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 150
-            })
-          })
-        }
-      },
       // 删除图片前的操作
       handleDeletePicture (file, fileList) {
         console.log(file)
@@ -172,14 +176,75 @@
       },
       reversedMessage (id) {
         return this.$http.adornUrl(`/baseannex/viewImage?id=` + id + `&token=${this.$cookie.get('token')}`)
+      },
+      // 有所改变时候
+      handleOnChange (file, fileList) {
+        console.log('11')
+        console.log(file, fileList)
+      },
+      handleHttpRequest (options) {
+        let formData = new FormData()
+        formData.append('file', options.file.raw, options.file.name)
+        return new Promise((resolve, reject) => {
+          this.$http({
+            url: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
+            method: 'post',
+            data: formData
+          }).then(({data}) => {
+            resolve(data)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
+      handleSuccess (res, file, fileList) {
+        this.dataForm.picUrl = res.batch[0].id
+      },
+      handleError (res, file, fileList) {
+        console.log(res, file, fileList)
+      },
+      // 删除图片
+      handleRemove (file, fileList) {
+        let list = []
+        if (typeof (file.response) !== 'undefined' && file.response !== null) {
+          let id = file.response.batch[0].id
+          list.push(id)
+        } else {
+          let url = file.url
+          let id = ''
+          if (url !== '') {
+            id = url.substr(50, 19)
+            list.push(id)
+          }
+        }
+        this.$http({
+          url: this.$http.adornUrl(`/baseannex/delete`),
+          method: 'post',
+          data: this.$http.adornData(list, false)
+        }).then(({data}) => {
+          if (data.code === 0) {
+            // 把图片id置为空
+            this.dataForm.picUrl = ''
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1000
+            })
+          }
+        })
+        console.log('22')
+        console.log(file, fileList)
       }
     },
     computed: {
       // 展示图片
       showPictures: function () {
-        if (this.dataForm.primaryPicId !== '') {
+        if (this.dataForm.picUrl !== '') {
+          console.log('1')
+          console.log(this.reversedMessage(this.dataForm.picUrl))
           return [{url: this.reversedMessage(this.dataForm.picUrl)}]
         } else {
+          console.log('2')
           return []
         }
       }

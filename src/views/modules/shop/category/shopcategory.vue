@@ -24,12 +24,6 @@
         align="center"
         width="50">
       </el-table-column>
-      <!--<el-table-column-->
-        <!--prop="parentId"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="父级id">-->
-      <!--</el-table-column>-->
       <table-tree-column
         prop="name"
         header-align="center"

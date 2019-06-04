@@ -13,8 +13,6 @@
       const UploadHandleChange = Upload.components.Upload.methods.handleChange
       Upload.components.Upload.methods.handleChange = ev => {
         if (typeof this.onChoose === 'function') {
-          console.log('ev===')
-          console.log(ev)
           _self.onChoose(ev)
         } else {
           UploadHandleChange.call(this, ev)

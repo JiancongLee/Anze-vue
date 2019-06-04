@@ -14,6 +14,7 @@ const http = axios.create({
 })
 /**
  * 请求拦截
+ * 添加请求拦截器，在发送请求之前做些什么
  */
 http.interceptors.request.use(config => {
   config.headers['token'] = Vue.cookie.get('token') // 请求头带上token
@@ -24,6 +25,8 @@ http.interceptors.request.use(config => {
 
 /**
  * 响应拦截
+ * 对响应数据做点什么，允许在数据返回客户端前，修改响应的数据
+ * 如果只需要返回体中数据，则如下，如果需要全部，则 return response 即可
  */
 http.interceptors.response.use(response => {
   if (response.data && response.data.code === 401) { // 401, token失效

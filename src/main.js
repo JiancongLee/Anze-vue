@@ -11,11 +11,12 @@ import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/a
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 import axios from 'axios'
-// import UploadCropper from '@/components/vue-upload-cropper'
+import apiAxios from '@/utils/baseRequest'
+
 import FormMaking from './index'
 Vue.use(FormMaking)
-// Vue.use(UploadCropper) // 图片上传裁剪插件
 Vue.use(VueCookie)
+Vue.use(apiAxios)
 Vue.config.productionTip = false
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock

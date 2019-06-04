@@ -1,9 +1,6 @@
 <script>
   import UploadExtendCropper from './uploadExtendCropper'
   import VueCropper from 'vue-cropper'
-  import putAjax from './putAjax'
-  import postAjax from './postAjax'
-
   function noop () {}
 
   export default {
@@ -122,6 +119,7 @@
           // 只有自动截图开启 宽度高度才生效
           autoCropWidth: 300, // 默认生成截图框宽度
           autoCropHeight: 300, // 默认生成截图框高度
+          centerBox: true,
           fixed: true, // 是否开启截图框宽高固定比例
           fixedNumber: [1, 1], // 截图框的宽高比例
           full: true, // 是否输出原图比例的截图
@@ -132,17 +130,26 @@
         }, this.cropper)
       }
     },
+    watch: {
+      fileList: function (val) {
+        console.log('66')
+        console.log(val)
+        this.fileListCopy = this.fileList
+      }
+    },
     computed: {
       // 已选图片是否超过图片数量限制
       isImageOverLimit () {
+        // return this.fileList.length >= this.limit
         return this.fileListCopy.length >= this.limit
       }
     },
     methods: {
       handleHttpRequest (options) {
-        console.log(options)
-        const ajax = this.method === 'put' ? putAjax : postAjax
-        return this.httpRequest ? this.httpRequest(options, ajax) : ajax(options)
+        // console.log(options)
+        // const ajax = this.method === 'put' ? putAjax : postAjax
+        // return this.httpRequest ? this.httpRequest(options, ajax) : ajax(options)
+        return this.httpRequest(options)
       },
       // 获取上传组件
       getUploadComponent () {
@@ -154,6 +161,7 @@
       },
       // 删除操作
       handleRemove (file, fileList) {
+        console.log('hahahxixixi')
         this.fileListCopy = fileList
         this.onRemove(file, fileList)
       },
@@ -164,6 +172,7 @@
         this.onPreview(file)
       },
       updatePreviewVisible (val) {
+        console.log(val)
         this.dialogPreview.dialogVisible = val
       },
       // 选择完本地图片
@@ -179,6 +188,7 @@
       },
       handleSuccess (res, file, fileList) {
         this.fileListCopy = fileList
+        console.log('88')
         this.onSuccess(res, file, fileList)
       },
       handleError (res, file, fileList) {
@@ -208,10 +218,10 @@
         // 当读取操作成功完成时调用
         reader.onload = (e) => {
           // 把Array Buffer转化为blob 如果是base64不需要
-          console.log(e)
           const data = (typeof e.target.result) === 'object' ? window.URL.createObjectURL(new Blob([e.target.result]))
             : e.target.result
           _this.cropperOpts.img = data
+          _this.cropperOpts.centerBox = true
           _this.showCropperDialog = true // 显示弹窗
         }
         // reader.readAsDataURL(file) // 转化为base64
@@ -249,6 +259,7 @@
           // 模仿图片组件内部构建对象的方式
           blob.uid = Date.now()
           blob.name = blob.uid + '.jpg'
+          blob.fliename = blob.uid + '.jpg'
           const file = {
             status: 'ready',
             name: blob.name,
@@ -266,6 +277,7 @@
           _this.showCropperDialog = false // 关闭裁剪弹窗
           _this.showCropperDialog && _this.getUploadComponent().uploadFiles.push(file)
           _this.fileListCopy.push(file)
+          // _this.handleChange(file, _this.fileList)
           _this.handleChange(file, _this.fileListCopy)
         })
       }
@@ -282,7 +294,8 @@
           name: this.name, // 上传的文件字段名
           data: this.data, // 上传时附带的额外参数
           accept: this.accept, // 接受上传的文件类型（thumbnail-mode 模式下此参数无效）
-          'file-list': this.fileListCopy, // 上传的文件列表, 例如: [{name: 'food.jpg', url: 'https://xxx.cdn.com/xxx.jpg'}]
+          // 'file-list': this.fileListCopy, // 上传的文件列表, 例如: [{name: 'food.jpg', url: 'https://xxx.cdn.com/xxx.jpg'}]
+          'file-list': this.fileList, // 上传的文件列表, 例如: [{name: 'food.jpg', url: 'https://xxx.cdn.com/xxx.jpg'}]
           'auto-upload': this.autoUpload, // 是否在选取文件后立即进行上传
           'list-type': this.listType, // 文件列表的类型
           disabled: this.disabled, // 是否禁用
@@ -293,7 +306,6 @@
           'on-error': this.handleError, // 文件上传失败时的钩子
           'on-preview': this.handlePreview, // 点击文件列表中已上传的文件时的钩子函数
           'on-remove': this.handleRemove, // 文件列表移除文件时的钩子
-          // 'on-change': this.handleChoose, // todo 这里有修改
           'on-choose': this.handleChoose,
           'http-request': this.handleHttpRequest // 覆盖默认的上传行为，可以自定义上传的实现
         },
@@ -306,7 +318,9 @@
       // 预览弹窗
       const previewDialogData = {
         props: {
-          visible: this.dialogPreview.dialogVisible
+          visible: this.dialogPreview.dialogVisible,
+          'modal-append-to-body': false,
+          'append-to-body': true
         },
         on: {
           'update:visible': this.updatePreviewVisible
@@ -328,8 +342,8 @@
     <img width='100%' src={ this.dialogPreview.dialogImageUrl }/>
       </el-dialog>
 
-      <el-dialog title='图片裁剪' width='80%' center
-      visible={ this.showCropperDialog } { ...{ on: { 'update:visible': val => { this.showCropperDialog = val } }}}>
+      <el-dialog title='图片裁剪' width='50%' center
+      visible={ this.showCropperDialog } { ...{ props:{'modal-append-to-body': false,'append-to-body': true}, on: { 'update:visible': val => { this.showCropperDialog = val } }}}>
     <VueCropper { ...{ style: { height: this.cropperOpts.height + 'px' } }} { ...cropperData }></VueCropper>
       <span slot='footer' class='dialog-footer'>
         <el-button { ...{ on: { click: this.cancelCropper }}}>取 消</el-button>

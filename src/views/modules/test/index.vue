@@ -57,20 +57,41 @@
       },
       handleHttpRequest (options, ajax) {
         console.log(options)
-
         let formData = new FormData()
-        formData.append('file', options.file)
-        formData.append('type', 'SKU')
-        // formData.append('id', this.$route.params.id)
-        console.log('上传图片接口-参数', options.file)
+        formData.append('file', options.file.raw, options.file.name)
+        return new Promise((resolve, reject) => {
+          this.$http({
+            url: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
+            method: 'post',
+            data: formData
+          }).then(({data}) => {
+            resolve(data)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+        // _this.$http({
+        //   url: _this.$http.adornUrl(`/baseannex/multiupload?token=${_this.$cookie.get('token')}`),
+        //   method: 'post',
+        //   data: formData
+        // }).then(({data}) => {
+        //   console.log(data)
+        // }).catch(err => {
+        //   console.log(err)
+        // })
+        // this.postAxios(`/baseannex/multiupload?token=${this.$cookie.get('token')}`, {
+        //   formData
+        // }).then((data) => {
+        //   console.log(data)
+        // }).catch((err) => {
+        //   console.log(err)
+        // })
         // options.Content-Type：multipart/form-data
         // options.headers = {
         //   'Content-Type': 'multipart/form-data'
         // //   'Accept': 'multipart/form-data',
         // //   'X-Requested-With': 'XMLHttpRequest'
         // }
-        // console.log(options)
-        // console.log(ajax)
         // // --------------
         // // 此处可用此方法动态修改请求 options，默认使用 ajax 发送请求，但只限于 form-data 形式表单 post|put 提交
         // options.action = this.uploadUrl
@@ -79,16 +100,6 @@
         //   'X-Requested-With': 'XMLHttpRequest'
         // }
         // ajax(options)
-        this.$http({
-          url: this.$http.adornUrl(`/baseannex/multiupload?token=${this.$cookie.get('token')}`),
-          method: 'post',
-          contentType: false,
-          data: formData
-        }).then(({data}) => {
-          console.log(data)
-        }).catch(err => {
-          console.log(err)
-        })
         // --------------
 
         // ---------------
